@@ -104,6 +104,6 @@ const baseURL = "http://<YOUR_IP_ADDRESS>:8000/api/v1/";
 <hr>
 
 ### Credits
-- [Coding Crashkurse](https://www.youtube.com/@codingcrashkurse642)
+- [Coding Crashkurse](https://www.youtube.com/@codingcrashkurse6429)
 - [freeCodeCamp.org](https://www.youtube.com/@freecodecamp)
 - [Code for Interview](https://www.youtube.com/@codeforinterview)
