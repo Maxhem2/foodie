@@ -3,7 +3,6 @@ import {
     Button,
     FormControl,
     FormErrorMessage,
-    FormLabel,
     Input,
     Modal,
     ModalBody,
@@ -13,13 +12,12 @@ import {
     ModalHeader,
     ModalOverlay,
     Stack,
-    Switch,
     Textarea,
     useColorModeValue,
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
 
@@ -30,6 +28,7 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
     const {
         handleSubmit,
         register,
+        getValues,
         control,
         formState: { errors, isSubmitting },
     } = useForm({
@@ -38,6 +37,7 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
 
     const onSubmit = async (values) => {
         try {
+            values = { ...values, expireDate: new Date(values.expireDate) };
             if (editable) {
                 await axiosInstance.put(`/todo/${todoId}`, values);
             } else {
@@ -127,7 +127,9 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
                                     variant="filled"
                                     size="lg"
                                     mt={6}
-                                    {...register("status")}
+                                    {...register("expireDate", {
+                                        required: "This field is required",
+                                    })}
                                 />
                             </FormControl>
                         </ModalBody>

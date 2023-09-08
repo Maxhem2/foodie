@@ -6,18 +6,18 @@ from pydantic import BaseModel, Field
 class TodoCreate(BaseModel):
     title: str = Field(..., title='Title', max_length=55, min_length=1)
     description: str = Field(..., title='Title', max_length=755, min_length=1)
-    status: Optional[bool] = False
+    expireDate: datetime = Field(..., title="ExpireDate" )
     
     
 class TodoUpdate(BaseModel):
     title: Optional[str] = Field(..., title='Title', max_length=55, min_length=1)
     description: Optional[str] = Field(..., title='Title', max_length=755, min_length=1)
-    status: Optional[bool] = False
+    expireDate: datetime = Field(..., title="ExpireDate")
     
 
 class TodoOut(BaseModel):
     todo_id: UUID
-    status: bool
+    expireDate: datetime
     title: str
     description: str
     created_at: datetime
