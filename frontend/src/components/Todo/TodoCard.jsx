@@ -1,19 +1,21 @@
 import { Badge, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import endOfDay from "date-fns/endOfDay";
+import { useCallback, useMemo } from "react";
 
 export const TodoCard = ({ todo }) => {
-    const calculateExpireDate = () => {
+    const calculateExpireDate = useCallback(() => {
         if (todo.expireDate !== null && todo.expireDate !== undefined) {
             const timeDifference = endOfDay(new Date(todo.expireDate)) - new Date();
             const daysDifference = timeDifference / (1000 * 3600 * 24);
             return Math.round(daysDifference);
         }
-    };
+    }, [todo.expireDate]);
+
+    const calculatedExpireDate = useMemo(() => calculateExpireDate(), [calculateExpireDate]);
 
     const colorSchemeSwitch = () => {
-        const expireDateDayDifference = calculateExpireDate();
-        return expireDateDayDifference < 0 ? "black" : expireDateDayDifference <= 3 ? "red" : expireDateDayDifference <= 10 ? "yellow" : "green";
+        return calculatedExpireDate < 0 ? "black" : calculatedExpireDate <= 3 ? "red" : calculatedExpireDate <= 10 ? "yellow" : "green";
     };
 
     const navigate = useNavigate();
@@ -35,7 +37,7 @@ export const TodoCard = ({ todo }) => {
         >
             <Text>{todo.title}</Text>
             <Badge colorScheme={colorSchemeSwitch()}>
-                {calculateExpireDate() < 0 ? `Ist seit ${Math.abs(calculateExpireDate())} Tagen abgelaufen` : `Läuft in ${calculateExpireDate()} Tagen ab`}
+                {calculatedExpireDate < 0 ? `Ist seit ${Math.abs(calculatedExpireDate)} Tagen abgelaufen` : `Läuft in ${calculatedExpireDate} Tagen ab`}
             </Badge>
         </Flex>
     );
