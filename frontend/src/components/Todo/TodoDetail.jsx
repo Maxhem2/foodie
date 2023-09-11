@@ -98,7 +98,7 @@ export const TodoDetail = () => {
                     defaultValues={{
                         title: todo.title,
                         description: todo.description,
-                        status: todo.status,
+                        status: todo.expireDate,
                     }}
                     onSuccess={fetchTodo}
                 />
