@@ -34,7 +34,9 @@ export const TodoCard = ({ todo }) => {
             onClick={() => navigate(`/${todo.todo_id}`, { replace: true })}
         >
             <Text>{todo.title}</Text>
-            <Badge colorScheme={colorSchemeSwitch()}>Läuft in {calculateExpireDate()} Tagen ab</Badge>
+            <Badge colorScheme={colorSchemeSwitch()}>
+                {calculateExpireDate() < 0 ? `Ist seit ${Math.abs(calculateExpireDate())} Tagen abgelaufen` : `Läuft in ${calculateExpireDate()} Tagen ab`}
+            </Badge>
         </Flex>
     );
 };
