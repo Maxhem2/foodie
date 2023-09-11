@@ -82,7 +82,7 @@ export const TodoDetail = () => {
 
     return (
         <>
-            <Container mt={6}>
+            <Container padding={0} mt={6}>
                 <Button colorScheme="gray" onClick={() => navigate("/", { replace: true })}>
                     Back
                 </Button>
