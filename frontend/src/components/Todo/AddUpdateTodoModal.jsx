@@ -18,9 +18,10 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { endOfDay } from "date-fns";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
+import { useEffect } from "react";
 
 export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuccess = () => {}, ...rest }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -29,10 +30,18 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
     const {
         handleSubmit,
         register,
+        control,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: { ...defaultValues },
     });
+
+    useEffect(() => {
+        const formattedDefaultDate = defaultValues.expireDate ? new Date(defaultValues.expireDate).toISOString().split("T")[0] : "";
+
+        setValue("expireDate", formattedDefaultDate);
+    }, [defaultValues.expireDate, setValue]);
 
     const onSubmit = async (values) => {
         try {
@@ -119,16 +128,22 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
                                 <FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
                             </FormControl>
                             <FormControl>
-                                <Input
-                                    type="date"
-                                    placeholder="Expiration date...."
-                                    background={useColorModeValue("gray.300", "gray.600")}
-                                    variant="filled"
-                                    size="lg"
-                                    mt={6}
-                                    {...register("expireDate", {
-                                        required: "This field is required",
-                                    })}
+                                <Controller
+                                    name="expireDate"
+                                    control={control}
+                                    defaultValue={defaultValues.expireDate}
+                                    render={({ field }) => (
+                                        <Input
+                                            type="date"
+                                            placeholder="Expiration date...."
+                                            value={field.value || ""}
+                                            onChange={(e) => e.target.value}
+                                            variant="filled"
+                                            size="lg"
+                                            mt={6}
+                                            {...field}
+                                        />
+                                    )}
                                 />
                             </FormControl>
                         </ModalBody>

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
 import { AddUpdateTodoModal } from "./AddUpdateTodoModal";
+import format from "date-fns/format";
 
 export const TodoDetail = () => {
     const [todo, setTodo] = useState({});
@@ -98,7 +99,7 @@ export const TodoDetail = () => {
                     defaultValues={{
                         title: todo.title,
                         description: todo.description,
-                        status: todo.expireDate,
+                        expireDate: new Date(todo.expireDate),
                     }}
                     onSuccess={fetchTodo}
                 />
