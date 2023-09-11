@@ -13,7 +13,7 @@ export const TodoCard = ({ todo }) => {
 
     const colorSchemeSwitch = () => {
         const expireDateDayDifference = calculateExpireDate();
-        return expireDateDayDifference <= 3 ? "red" : expireDateDayDifference <= 10 ? "yellow" : "green";
+        return expireDateDayDifference < 0 ? "black" : expireDateDayDifference <= 3 ? "red" : expireDateDayDifference <= 10 ? "yellow" : "green";
     };
 
     const navigate = useNavigate();
