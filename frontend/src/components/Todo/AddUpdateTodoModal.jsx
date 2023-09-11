@@ -17,7 +17,7 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import { endOfDay } from "date-fns";
+import { endOfDay, startOfDay } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
@@ -31,6 +31,7 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
         handleSubmit,
         register,
         control,
+        reset,
         setValue,
         formState: { errors, isSubmitting },
     } = useForm({
@@ -59,6 +60,7 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
             });
             onSuccess();
             onClose();
+            reset();
         } catch (err) {
             console.error(err);
             toast({
@@ -91,7 +93,7 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
                                     size="lg"
                                     mt={6}
                                     {...register("title", {
-                                        required: "This is required field",
+                                        required: "This is a required field",
                                         minLength: {
                                             value: 5,
                                             message: "Title must be at least 5 characters",
@@ -114,7 +116,7 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
                                     size="lg"
                                     mt={6}
                                     {...register("description", {
-                                        required: "This is required field",
+                                        required: "This is a required field",
                                         minLength: {
                                             value: 5,
                                             message: "Description must be at least 5 characters",
@@ -132,17 +134,24 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
                                     name="expireDate"
                                     control={control}
                                     defaultValue={defaultValues.expireDate}
+                                    rules={{
+                                        required: "This is a required field",
+                                        validate: (value) => (startOfDay(new Date(value)) < startOfDay(new Date()) ? "Date must be atleast or in futrue" : true),
+                                    }}
                                     render={({ field }) => (
-                                        <Input
-                                            type="date"
-                                            placeholder="Expiration date...."
-                                            value={field.value || ""}
-                                            onChange={(e) => e.target.value}
-                                            variant="filled"
-                                            size="lg"
-                                            mt={6}
-                                            {...field}
-                                        />
+                                        <div>
+                                            <Input
+                                                type="date"
+                                                placeholder="Expiration date...."
+                                                value={field.value || ""}
+                                                onChange={(e) => e.target.value}
+                                                variant="filled"
+                                                size="lg"
+                                                mt={6}
+                                                {...field}
+                                            />
+                                            {errors.expireDate && <p>{errors.expireDate.message}</p>}{" "}
+                                        </div>
                                     )}
                                 />
                             </FormControl>
