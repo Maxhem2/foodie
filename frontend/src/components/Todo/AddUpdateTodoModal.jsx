@@ -28,8 +28,6 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
     const {
         handleSubmit,
         register,
-        getValues,
-        control,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: { ...defaultValues },

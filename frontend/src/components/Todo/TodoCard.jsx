@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export const TodoCard = ({ todo }) => {
     const calculateExpireDate = () => {
         if (todo.expireDate !== null && todo.expireDate !== undefined) {
-            const timeDifference = todo.expireDate - new Date();
+            const timeDifference = new Date(todo.expireDate) - new Date();
 
             const daysDifference = timeDifference / (1000 * 3600 * 24);
             return Math.round(daysDifference);
