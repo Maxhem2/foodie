@@ -1,9 +1,10 @@
-import { Box, Center, Container, Flex, Spinner } from "@chakra-ui/react";
+import { Box, Center, Container, Flex, Spinner, Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../../services/axios";
 import { AddUpdateTodoModal } from "./AddUpdateTodoModal";
 import { TodoCard } from "./TodoCard";
 import DropdownFilter from "../Drowdown/DropdownFilter";
+import format from "date-fns/format";
 
 export const TodoList = () => {
     const [todos, setTodos] = useState([]);
@@ -42,6 +43,14 @@ export const TodoList = () => {
                 <AddUpdateTodoModal onSuccess={fetchTodos} />
                 <DropdownFilter filter={filterEntries} />
             </Flex>
+            {date !== undefined && date.start !== undefined && date.end !== undefined ? (
+                <Tag mt={3} size={"lg"} borderRadius={"full"} colorScheme="messenger">
+                    <TagLabel>
+                        {`${format(new Date(date.start), "dd-MM-yyyy")} - ${format(new Date(date.end), "dd-MM-yyyy")}`}
+                    </TagLabel>
+                    <TagCloseButton onClick={() => setDate(undefined)}/>
+                </Tag>
+            ) : null}
             {loading ? (
                 <Center mt={6}>
                     <Spinner thickness="4px" speed="0.65s" emptyColor="orange.200" color="orange.500" size="xl" />
