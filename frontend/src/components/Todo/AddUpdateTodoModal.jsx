@@ -62,7 +62,7 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
     };
 
     return (
-        <Box {...rest}>
+        <Box {...rest} w={editable ? "100%" : "90%"}>
             <Button w="100%" colorScheme="blue" onClick={onOpen}>
                 {editable ? "UPDATE ITEM" : "ADD ITEM"}
             </Button>
