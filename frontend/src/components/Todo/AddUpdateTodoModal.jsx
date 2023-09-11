@@ -17,6 +17,7 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
+import { endOfDay } from "date-fns";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
@@ -35,7 +36,7 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
 
     const onSubmit = async (values) => {
         try {
-            values = { ...values, expireDate: new Date(values.expireDate) };
+            values = { ...values, expireDate: endOfDay(new Date(values.expireDate)) };
             if (editable) {
                 await axiosInstance.put(`/todo/${todoId}`, values);
             } else {
