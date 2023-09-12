@@ -5,9 +5,9 @@ from beanie import Document, Indexed, Link, before_event, Replace, Insert
 from pydantic import Field
 from .user_model import User
 
-class Item(Document):
-    item_id: UUID = Field(default_factory=uuid4, unique=True)
-    expireDate: datetime = Field(default=datetime.utcnow())
+class Todo(Document):
+    todo_id: UUID = Field(default_factory=uuid4, unique=True)
+    status: bool = False
     title: Indexed(str)
     description: str = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
@@ -15,7 +15,7 @@ class Item(Document):
     owner: Link[User]
     
     def __repr__(self) -> str:
-        return f"<Item {self.title}>"
+        return f"<Todo {self.title}>"
 
     def __str__(self) -> str:
         return self.title
@@ -24,8 +24,8 @@ class Item(Document):
         return hash(self.title)
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, Item):
-            return self.item_id == other.item_id
+        if isinstance(other, Todo):
+            return self.todo_id == other.todo_id
         return False
     
     @before_event([Replace, Insert])
@@ -34,4 +34,4 @@ class Item(Document):
         
     
     class Collection:
-        name = "items"
+        name = "todos"

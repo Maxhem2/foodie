@@ -3,21 +3,21 @@ from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel, Field
 
-class ItemCreate(BaseModel):
+class TodoCreate(BaseModel):
     title: str = Field(..., title='Title', max_length=55, min_length=1)
     description: str = Field(..., title='Title', max_length=755, min_length=1)
-    expireDate: datetime = Field(..., title="ExpireDate" )
+    status: Optional[bool] = False
     
     
-class ItemUpdate(BaseModel):
+class TodoUpdate(BaseModel):
     title: Optional[str] = Field(..., title='Title', max_length=55, min_length=1)
     description: Optional[str] = Field(..., title='Title', max_length=755, min_length=1)
-    expireDate: datetime = Field(..., title="ExpireDate")
+    status: Optional[bool] = False
     
 
-class ItemOut(BaseModel):
-    item_id: UUID
-    expireDate: datetime
+class TodoOut(BaseModel):
+    todo_id: UUID
+    status: bool
     title: str
     description: str
     created_at: datetime
