@@ -12,7 +12,7 @@ item_router = APIRouter()
 
 @item_router.get('/', summary="Get all items of the user", response_model=List[ItemOut])
 async def list(current_user: User = Depends(get_current_user)):
-     items = await ItemService.list_items(current_user)
+   items = await ItemService.list_items(current_user)
 
    for list_items in items:
     afd = list_items.item_id
