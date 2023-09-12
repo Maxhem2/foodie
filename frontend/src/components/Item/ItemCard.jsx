@@ -6,7 +6,7 @@ import { useCallback, useMemo } from "react";
 export const ItemCard = ({ item }) => {
     const calculateExpireDate = useCallback(() => {
         if (item.expireDate !== null && item.expireDate !== undefined) {
-            const timeDifference = endOfDay(new Date(item.expireDate)) - new Date();
+            const timeDifference = endOfDay(new Date(item.expireDate)) - endOfDay(new Date());
             const daysDifference = timeDifference / (1000 * 3600 * 24);
             return Math.round(daysDifference);
         }
