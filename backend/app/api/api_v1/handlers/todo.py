@@ -12,7 +12,18 @@ todo_router = APIRouter()
 
 @todo_router.get('/', summary="Get all todos of the user", response_model=List[TodoOut])
 async def list(current_user: User = Depends(get_current_user)):
-    return await TodoService.list_todos(current_user)
+   todos = await TodoService.list_todos(current_user)
+
+   for list_todos in todos:
+    afd = list_todos.todo_id
+    print("List: "+str(afd))
+    if(await TodoService.isValidateDate(current_user=current_user, todo_id=afd)) == True:
+        print("IsValidate")
+    else:   
+        print("Error not Validate")
+    
+      
+   return todos
 
 
 @todo_router.post('/create', summary="Create Todo", response_model=Todo)
@@ -28,6 +39,7 @@ async def retrieve(todo_id: UUID, current_user: User = Depends(get_current_user)
 @todo_router.put('/{todo_id}', summary="Update todo by todo_id", response_model=TodoOut)
 async def update(todo_id: UUID, data: TodoUpdate, current_user: User = Depends(get_current_user)):
     return await TodoService.update_todo(current_user, todo_id, data)
+
 
 
 @todo_router.delete('/{todo_id}', summary="Delete todo by todo_id")
