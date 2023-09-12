@@ -40,7 +40,7 @@ class ItemService:
 #Calculating remaining time and return false if the date is expired
     @staticmethod
     async def isValidateDate(current_user: User, item_id: UUID) -> None:
-        item = await ItemService.retrieve_todo(current_user, item_id)
+        item = await ItemService.retrieve_item(current_user, item_id)
         if item:
             date = item.expireDate - datetime.utcnow()
             #convert date to int
