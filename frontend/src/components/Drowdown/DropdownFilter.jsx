@@ -44,8 +44,8 @@ const DropdownFilter = ({ filter = (start, end) => {} }) => {
                 icon={<Image src={`${process.env.PUBLIC_URL}icons/filterIcon.svg`} boxSize={"inherit"} alt="filter" />}
             />
             <MenuList>
-                <MenuItem onClick={() => filterDate(startOfDay(new Date()), endOfDay(addDays(new Date(), 3)))}>Ablauf in mind. 3 Tagen</MenuItem>
-                <MenuItem onClick={() => filterDate(startOfDay(addDays(new Date(), 3)), endOfDay(addDays(new Date(), 10)))}>Ablauf in mind. 10 Tagen</MenuItem>
+                <MenuItem onClick={() => filterDate(startOfDay(new Date()), endOfDay(addDays(new Date(), 3)))}>Ablauf in 3 Tagen oder weniger</MenuItem>
+                <MenuItem onClick={() => filterDate(startOfDay(addDays(new Date(), 3)), endOfDay(addDays(new Date(), 10)))}>Ablauf in 10 Tagen oder weniger</MenuItem>
                 <MenuItem onClick={() => filterDate(startOfDay(addDays(new Date(), 10)), endOfYear(new Date(2037, 1, 1)))}>Ablauf in über 10 Tagen</MenuItem>
                 <MenuItem onClick={onOpen} closeOnSelect={false}>
                     Zeitraum auswählen
