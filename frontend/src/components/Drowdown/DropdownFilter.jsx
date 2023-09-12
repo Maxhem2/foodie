@@ -32,7 +32,7 @@ const DropdownFilter = ({ filter = (start, end) => {} }) => {
     };
 
     const modalOnSave = () => {
-        filterDate(new Date(startDate), new Date(endDate));
+        filterDate(startOfDay(new Date(startDate)), endOfDay(new Date(endDate)));
         onClose();
     };
 
