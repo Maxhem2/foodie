@@ -35,3 +35,21 @@ class TodoService:
             await todo.delete()
             
         return None
+
+#Calculating remaining time and return false if the date is expired
+    @staticmethod
+    async def isValidateDate(current_user: User, todo_id: UUID) -> None:
+        todo = await TodoService.retrieve_todo(current_user, todo_id)
+        if todo:
+            date = todo.expireDate - datetime.utcnow()
+            #convert date to int
+            date = int(date.total_seconds())
+
+            print("Date: "+str(date))
+          
+            if date > 0:
+                return True
+            else:
+                return False
+            
+        return None
