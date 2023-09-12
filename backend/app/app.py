@@ -5,7 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.api.api_v1.router import router
 from app.core.config import settings
-from app.models.item_model import Item
+from app.models.todo_model import Todo
 from app.models.user_model import User
 
 app = FastAPI(
@@ -24,13 +24,13 @@ app.add_middleware(
 @app.on_event("startup")
 async def app_init():
     
-    db_client = AsyncIOMotorClient(settings.MONGO_CONNECTION_STRING).ITEMLIST
+    db_client = AsyncIOMotorClient(settings.MONGO_CONNECTION_STRING).TODOLIST
     
     await init_beanie(
         database=db_client,
         document_models= [
             User,
-            Item
+            Todo
         ]
     )
     
