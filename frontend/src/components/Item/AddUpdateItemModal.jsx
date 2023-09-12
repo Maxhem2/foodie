@@ -136,7 +136,7 @@ export const AddUpdateItemModal = ({ editable = false, defaultValues = {}, onSuc
                                     defaultValue={defaultValues.expireDate}
                                     rules={{
                                         required: "This is a required field",
-                                        validate: (value) => (!editable ? startOfDay(new Date(value)) < startOfDay(new Date()) ? "Date must be atleast or in futrue" : true : true),
+                                        validate: (value) => (!editable ? startOfDay(new Date(value)) < startOfDay(new Date()) ? "Date must be atleast today or in future" : true : true),
                                     }}
                                     render={({ field }) => (
                                         <div>
