@@ -2,26 +2,26 @@ import { Button, Center, Container, Spinner, Text, useColorModeValue, useToast }
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
-import { AddUpdateTodoModal } from "./AddUpdateTodoModal";
+import { AddUpdateItemModal } from "./AddUpdateItemModal";
 import format from "date-fns/format";
 
-export const TodoDetail = () => {
-    const [todo, setTodo] = useState({});
+export const ItemDetail = () => {
+    const [item, setItem] = useState({});
     const [loading, setLoading] = useState(true);
     const isMounted = useRef(false);
-    const { todoId } = useParams();
+    const { itemId } = useParams();
     const navigate = useNavigate();
     const toast = useToast();
     const background = useColorModeValue("gray.300", "gray.600");
 
     useEffect(() => {
         if (isMounted.current) return;
-        const fetchTodo = () => {
+        const fetchItem = () => {
             setLoading(true);
             axiosInstance
-                .get(`/todo/${todoId}`)
+                .get(`/item/${itemId}`)
                 .then((res) => {
-                    setTodo(res.data);
+                    setItem(res.data);
                 })
                 .catch((error) => console.error(error))
                 .finally(() => {
@@ -29,16 +29,16 @@ export const TodoDetail = () => {
                 });
         };
 
-        fetchTodo();
+        fetchItem();
         isMounted.current = true;
-    }, [todoId]);
+    }, [itemId]);
 
-    const fetchTodo = () => {
+    const fetchItem = () => {
         setLoading(true);
         axiosInstance
-            .get(`/todo/${todoId}`)
+            .get(`/item/${itemId}`)
             .then((res) => {
-                setTodo(res.data);
+                setItem(res.data);
             })
             .catch((error) => console.error(error))
             .finally(() => {
@@ -46,10 +46,10 @@ export const TodoDetail = () => {
             });
     };
 
-    const delateTodo = () => {
+    const delateItem = () => {
         setLoading(true);
         axiosInstance
-            .delete(`/todo/${todoId}`)
+            .delete(`/item/${itemId}`)
             .then(() => {
                 toast({
                     title: "Item deleted successfully",
@@ -89,21 +89,21 @@ export const TodoDetail = () => {
                 </Button>
             </Container>
             <Container bg={background} minHeight="7rem" my={3} p={3} rounded="lg" alignItems="center" justifyContent="space-between">
-                <Text fontSize={22}>{todo.title}</Text>
+                <Text fontSize={22}>{item.title}</Text>
                 <Text bg="gray.500" mt={2} p={2} rounded="lg">
-                    {todo.description}
+                    {item.description}
                 </Text>
-                <AddUpdateTodoModal
+                <AddUpdateItemModal
                     my={3}
                     editable={true}
                     defaultValues={{
-                        title: todo.title,
-                        description: todo.description,
-                        expireDate: new Date(todo.expireDate),
+                        title: item.title,
+                        description: item.description,
+                        expireDate: new Date(item.expireDate),
                     }}
-                    onSuccess={fetchTodo}
+                    onSuccess={fetchItem}
                 />
-                <Button isLoading={loading} colorScheme="red" width="100%" onClick={delateTodo}>
+                <Button isLoading={loading} colorScheme="red" width="100%" onClick={delateItem}>
                     Delete
                 </Button>
             </Container>

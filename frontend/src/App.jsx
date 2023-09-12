@@ -5,8 +5,8 @@ import { Login } from "./components/Auth/Login";
 import { PublicRoute } from "./components/Auth/PublicRoute";
 import { Register } from "./components/Auth/Register";
 import { NavBar } from "./components/Navbar/NavBar";
-import { TodoDetail } from "./components/Todo/TodoDetail";
-import { TodoList } from "./components/Todo/TodoList";
+import { ItemDetail } from "./components/Item/ItemDetail";
+import { ItemList } from "./components/Item/ItemList";
 import { AuthConsumer, AuthProvider } from "./context/JWTAuthContext";
 
 function App() {
@@ -43,15 +43,15 @@ function App() {
                                             path="/"
                                             element={
                                                 <Authenticated>
-                                                    <TodoList />
+                                                    <ItemList />
                                                 </Authenticated>
                                             }
                                         />
                                         <Route
-                                            path="/:todoId"
+                                            path="/:itemId"
                                             element={
                                                 <Authenticated>
-                                                    <TodoDetail />
+                                                    <ItemDetail />
                                                 </Authenticated>
                                             }
                                         />

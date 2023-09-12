@@ -1,29 +1,29 @@
 import { Box, Center, Container, Flex, Spinner, Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../../services/axios";
-import { AddUpdateTodoModal } from "./AddUpdateTodoModal";
-import { TodoCard } from "./TodoCard";
+import { AddUpdateItemModal } from "./AddUpdateItemModal";
+import { ItemCard } from "./ItemCard";
 import DropdownFilter from "../Drowdown/DropdownFilter";
 import format from "date-fns/format";
 
-export const TodoList = () => {
-    const [todos, setTodos] = useState([]);
+export const ItemList = () => {
+    const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [date, setDate] = useState();
     const isMounted = useRef(false);
 
     useEffect(() => {
         if (isMounted.current) return;
-        fetchTodos();
+        fetchItems();
         isMounted.current = true;
     }, []);
 
-    const fetchTodos = () => {
+    const fetchItems = () => {
         setLoading(true);
         axiosInstance
-            .get("/todo/")
+            .get("/item/")
             .then((res) => {
-                setTodos(res.data);
+                setItems(res.data);
             })
             .catch((error) => {
                 console.error(error);
@@ -40,7 +40,7 @@ export const TodoList = () => {
     return (
         <Container mt={9}>
             <Flex gap={2}>
-                <AddUpdateTodoModal onSuccess={fetchTodos} />
+                <AddUpdateItemModal onSuccess={fetchItems} />
                 <DropdownFilter filter={filterEntries} />
             </Flex>
             {date !== undefined && date.start !== undefined && date.end !== undefined ? (
@@ -57,15 +57,15 @@ export const TodoList = () => {
                 </Center>
             ) : (
                 <Box mt={6}>
-                    {todos
-                        ?.filter((todo) =>
+                    {items
+                        ?.filter((item) =>
                             date !== undefined && date.start !== undefined && date.end !== undefined
-                                ? new Date(todo.expireDate) >= date.start && new Date(todo.expireDate) < date.end
-                                : todo
+                                ? new Date(item.expireDate) >= date.start && new Date(item.expireDate) < date.end
+                                : item
                         )
                         .sort((a, b) => (a.expireDate > b.expireDate ? 1 : -1))
-                        .map((todo) => (
-                            <TodoCard todo={todo} key={todo.todo_id} />
+                        .map((item) => (
+                            <ItemCard item={item} key={item.item_id} />
                         ))}
                 </Box>
             )}

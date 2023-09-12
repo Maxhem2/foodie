@@ -23,10 +23,10 @@ import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
 import { useEffect } from "react";
 
-export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuccess = () => {}, ...rest }) => {
+export const AddUpdateItemModal = ({ editable = false, defaultValues = {}, onSuccess = () => {}, ...rest }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
-    const { todoId } = useParams();
+    const { itemId } = useParams();
     const {
         handleSubmit,
         register,
@@ -48,9 +48,9 @@ export const AddUpdateTodoModal = ({ editable = false, defaultValues = {}, onSuc
         try {
             values = { ...values, expireDate: endOfDay(new Date(values.expireDate)) };
             if (editable) {
-                await axiosInstance.put(`/todo/${todoId}`, values);
+                await axiosInstance.put(`/item/${itemId}`, values);
             } else {
-                await axiosInstance.post(`/todo/create/`, values);
+                await axiosInstance.post(`/item/create/`, values);
             }
             toast({
                 title: editable ? "Item Updated" : "Item Added",

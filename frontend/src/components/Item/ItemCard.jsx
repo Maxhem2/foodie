@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import endOfDay from "date-fns/endOfDay";
 import { useCallback, useMemo } from "react";
 
-export const TodoCard = ({ todo }) => {
+export const ItemCard = ({ item }) => {
     const calculateExpireDate = useCallback(() => {
-        if (todo.expireDate !== null && todo.expireDate !== undefined) {
-            const timeDifference = endOfDay(new Date(todo.expireDate)) - new Date();
+        if (item.expireDate !== null && item.expireDate !== undefined) {
+            const timeDifference = endOfDay(new Date(item.expireDate)) - new Date();
             const daysDifference = timeDifference / (1000 * 3600 * 24);
             return Math.round(daysDifference);
         }
-    }, [todo.expireDate]);
+    }, [item.expireDate]);
 
     const calculatedExpireDate = useMemo(() => calculateExpireDate(), [calculateExpireDate]);
 
@@ -33,9 +33,9 @@ export const TodoCard = ({ todo }) => {
                 cursor: "pointer",
                 transform: "translateY(-3px)",
             }}
-            onClick={() => navigate(`/${todo.todo_id}`, { replace: true })}
+            onClick={() => navigate(`/${item.item_id}`, { replace: true })}
         >
-            <Text>{todo.title}</Text>
+            <Text>{item.title}</Text>
             <Badge colorScheme={colorSchemeSwitch()}>
                 {calculatedExpireDate < 0 ? `Ist seit ${Math.abs(calculatedExpireDate)} Tagen abgelaufen` : `Läuft in ${calculatedExpireDate} Tagen ab`}
             </Badge>
