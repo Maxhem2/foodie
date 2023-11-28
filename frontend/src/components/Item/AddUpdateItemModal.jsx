@@ -1,173 +1,80 @@
-import {
-    Box,
-    Button,
-    FormControl,
-    FormErrorMessage,
-    Input,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
-    Stack,
-    Textarea,
-    useColorModeValue,
-    useDisclosure,
-    useToast,
-} from "@chakra-ui/react";
-import { endOfDay, startOfDay } from "date-fns";
-import { Controller, useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import axiosInstance from "../../services/axios";
-import { useEffect } from "react";
+import { Box, Button, Modal, ModalOverlay, useDisclosure, ModalContent } from "@chakra-ui/react";
+import { useEffect, useMemo, useState } from "react";
+import { ItemForm } from "./ItemForm";
+import { BarcodeReader } from "../BarcodeReader/BarcodeReader";
+
+const ViewMode = {
+    None: "none",
+    Camera: "camera",
+    Form: "Form",
+    CameraForm: "CameraForm",
+};
 
 export const AddUpdateItemModal = ({ editable = false, defaultValues = {}, onSuccess = () => {}, ...rest }) => {
+    const [viewMode, setViewMode] = useState(ViewMode.None);
+    const [barcode, setBarcode] = useState();
+    const [foodEntry, setFoodEntry] = useState();
+
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const toast = useToast();
-    const { itemId } = useParams();
-    const {
-        handleSubmit,
-        register,
-        control,
-        reset,
-        setValue,
-        formState: { errors, isSubmitting },
-    } = useForm({
-        defaultValues: { ...defaultValues },
-    });
+
+    const foodEntryValues = useMemo(() => {
+        if (foodEntry) {
+            return { title: foodEntry.product.product_name, description: foodEntry.product._keywords.join(",\n") };
+        }
+        return {};
+    }, [foodEntry]);
+
+    const cameraBarcodeFound = (barcode) => {
+        setBarcode(barcode);
+    };
 
     useEffect(() => {
-        const formattedDefaultDate = defaultValues.expireDate ? new Date(defaultValues.expireDate).toISOString().split("T")[0] : "";
-
-        setValue("expireDate", formattedDefaultDate);
-    }, [defaultValues.expireDate, setValue]);
-
-    const onSubmit = async (values) => {
-        try {
-            values = { ...values, expireDate: endOfDay(new Date(values.expireDate)) };
-            if (editable) {
-                await axiosInstance.put(`/item/${itemId}`, values);
-            } else {
-                await axiosInstance.post(`/item/create/`, values);
-            }
-            toast({
-                title: editable ? "Item Updated" : "Item Added",
-                status: "success",
-                isClosable: true,
-                diration: 1500,
-            });
-            onSuccess();
-            onClose();
-            reset();
-        } catch (err) {
-            console.error(err);
-            toast({
-                title: "Something went wrong. Please try again.",
-                status: "error",
-                isClosable: true,
-                diration: 1500,
-            });
+        if (barcode) {
+            (async () => {
+                await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode.text}.json`)
+                    .then((res) => res.json())
+                    .then((res) => setFoodEntry(res));
+            })();
         }
-    };
+    }, [barcode]);
+
+    useEffect(() => {
+        if (!isOpen) setViewMode(ViewMode.None);
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (foodEntry) {
+            setViewMode(ViewMode.CameraForm);
+        }
+    }, [foodEntry]);
 
     return (
         <Box {...rest} w={editable ? "100%" : "90%"}>
             <Button w="100%" colorScheme="blue" onClick={onOpen}>
                 {editable ? "UPDATE ITEM" : "ADD ITEM"}
             </Button>
-            <Modal closeOnOverlayClick={false} size="xl" onClose={onClose} isOpen={isOpen} isCentered>
+            <Modal closeOnOverlayClick={true} size="xl" onClose={onClose} isOpen={isOpen} isCentered>
                 <ModalOverlay />
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <ModalContent>
-                        <ModalHeader>{editable ? "Update Item" : "ADD ITEM"}</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                            <FormControl isInvalid={errors.title}>
-                                <Input
-                                    placeholder="Item Title...."
-                                    background={useColorModeValue("gray.300", "gray.600")}
-                                    type="text"
-                                    variant="filled"
-                                    size="lg"
-                                    mt={6}
-                                    {...register("title", {
-                                        required: "This is a required field",
-                                        minLength: {
-                                            value: 5,
-                                            message: "Title must be at least 5 characters",
-                                        },
-                                        maxLength: {
-                                            value: 55,
-                                            message: "Title must be limited to 55 characters",
-                                        },
-                                    })}
-                                />
-                                <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
-                            </FormControl>
-                            <FormControl isInvalid={errors.description}>
-                                <Textarea
-                                    rows={5}
-                                    placeholder="Add description...."
-                                    background={useColorModeValue("gray.300", "gray.600")}
-                                    type="test"
-                                    variant="filled"
-                                    size="lg"
-                                    mt={6}
-                                    {...register("description", {
-                                        required: "This is a required field",
-                                        minLength: {
-                                            value: 5,
-                                            message: "Description must be at least 5 characters",
-                                        },
-                                        maxLength: {
-                                            value: 200,
-                                            message: "Description must be limited to 200 characters",
-                                        },
-                                    })}
-                                />
-                                <FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
-                            </FormControl>
-                            <FormControl>
-                                <Controller
-                                    name="expireDate"
-                                    control={control}
-                                    defaultValue={defaultValues.expireDate}
-                                    rules={{
-                                        required: "This is a required field",
-                                        validate: (value) => (!editable ? startOfDay(new Date(value)) < startOfDay(new Date()) ? "Date must be atleast today or in future" : true : true),
-                                    }}
-                                    render={({ field }) => (
-                                        <div>
-                                            <Input
-                                                type="date"
-                                                placeholder="Expiration date...."
-                                                value={field.value || ""}
-                                                onChange={(e) => e.target.value}
-                                                variant="filled"
-                                                size="lg"
-                                                mt={6}
-                                                {...field}
-                                            />
-                                            {errors.expireDate && <p>{errors.expireDate.message}</p>}{" "}
-                                        </div>
-                                    )}
-                                />
-                            </FormControl>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Stack direction="row" spacing={4}>
-                                <Button onClick={onClose} disabled={isSubmitting}>
-                                    Close
-                                </Button>
-                                <Button colorScheme="blue" type="submit" isLoading={isSubmitting} loadingText={editable ? "Updating" : "Creating"}>
-                                    {editable ? "Update" : "Create"}
-                                </Button>
-                            </Stack>
-                        </ModalFooter>
-                    </ModalContent>
-                </form>
+                <ModalContent>
+                    {viewMode === ViewMode.Form ? (
+                        <ItemForm editable={editable} defaultValues={defaultValues} onClose={() => onClose()} onSuccess={() => onSuccess()} />
+                    ) : viewMode === ViewMode.Camera ? (
+                        <BarcodeReader onResult={(data) => cameraBarcodeFound(data)} />
+                    ) : viewMode === ViewMode.CameraForm ? (
+                        <ItemForm
+                            editable={editable}
+                            defaultValues={foodEntryValues}
+                            onClose={() => onClose()}
+                            onSuccess={() => onSuccess()}
+                            openCamera={() => setViewMode(ViewMode.Camera)}
+                        />
+                    ) : (
+                        <>
+                            <Button onClick={() => setViewMode(ViewMode.Camera)}>Camera</Button>
+                            <Button onClick={() => setViewMode(ViewMode.Form)}>Form</Button>
+                        </>
+                    )}
+                </ModalContent>
             </Modal>
         </Box>
     );
