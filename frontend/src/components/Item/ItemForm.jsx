@@ -40,8 +40,6 @@ export const ItemForm = ({ editable = false, defaultValues = {}, onSuccess = () 
         setValue("expireDate", formattedDefaultDate);
     }, [defaultValues.expireDate, setValue]);
 
-    console.log(editable);
-
     const onSubmit = async (values) => {
         try {
             values = { ...values, expireDate: endOfDay(new Date(values.expireDate)) };
