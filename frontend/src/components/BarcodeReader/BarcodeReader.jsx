@@ -19,7 +19,7 @@ export const BarcodeReader = ({ onResult = (data) => data, onError = () => {} })
                 videoRef.current,
                 (result, error) => {
                     if (result) setBarcodeData(result);
-                    if (error) console.log(error);
+                    if (error) console.error(error);
                 }
             );
             return () => {
