@@ -11,16 +11,25 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [18.15.0]
+
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js 18.15.0
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 18.15.0
+        node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Navigate to frontend directory
+
+    - name: Enter frontend directory
       run: cd frontend
+
     - name: Install dependencies
       run: npm install
-    - name: Start the application
+
+    - name: Start Application and Check for Errors
       run: npm start
