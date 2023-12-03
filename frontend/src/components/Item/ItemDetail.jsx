@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
 import { AddUpdateItemModal } from "./AddUpdateItemModal";
-import format from "date-fns/format";
 
 export const ItemDetail = () => {
     const [item, setItem] = useState({});

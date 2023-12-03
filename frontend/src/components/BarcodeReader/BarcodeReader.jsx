@@ -9,7 +9,8 @@ export const BarcodeReader = ({ onResult = (data) => data, onError = () => {} })
     useEffect(() => {
         if (!barcodeData) {
             if (!videoRef.current) return;
-            reader.current.decodeFromConstraints(
+            const currentReader = reader.current;
+            currentReader.decodeFromConstraints(
                 {
                     audio: false,
                     video: {
@@ -23,7 +24,7 @@ export const BarcodeReader = ({ onResult = (data) => data, onError = () => {} })
                 }
             );
             return () => {
-                reader.current.reset();
+                currentReader.reset();
             };
         } else {
             onResult(barcodeData);
