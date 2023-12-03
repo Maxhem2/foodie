@@ -12,9 +12,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7   # 7 days
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://85.215.190.209:3000"
+        "http://localhost:3000"
     ]
-    PROJECT_NAME: str = "TODOLIST"
+    PROJECT_NAME: str = "ITEMLIST"
     
     # Database
     MONGO_CONNECTION_STRING: str = config("MONGO_CONNECTION_STRING", cast=str)
