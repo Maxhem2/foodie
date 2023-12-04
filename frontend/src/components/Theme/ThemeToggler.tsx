@@ -1,10 +1,14 @@
-import { FormLabel, Switch, useColorMode } from "@chakra-ui/react";
+import { FormLabel, Switch, SwitchProps, useColorMode } from "@chakra-ui/react";
 
-export const ThemeToggler = ({ showLabel = false, ...rest }) => {
+type ThemeTogglerProps = {
+  showLabel: boolean,
+} & SwitchProps
+
+export const ThemeToggler = (props: ThemeTogglerProps) => {
   const { toggleColorMode, colorMode } = useColorMode();
   return (
     <>
-      {showLabel && (
+      {props.showLabel && (
         <FormLabel htmlFor="theme-toggler" mb={0}>
           Enable Dark Theme
         </FormLabel>
@@ -18,7 +22,7 @@ export const ThemeToggler = ({ showLabel = false, ...rest }) => {
         colorScheme="orange"
         mr={2}
         onChange={toggleColorMode}
-        {...rest}
+        {...props}
       />
     </>
   );

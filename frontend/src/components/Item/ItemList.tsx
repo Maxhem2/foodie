@@ -1,22 +1,26 @@
 import { Box, Center, Container, Flex, Spinner, Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import axiosInstance from "../../services/axios";
 import { AddUpdateItemModal } from "./AddUpdateItemModal";
 import { ItemCard } from "./ItemCard";
 import DropdownFilter from "../Drowdown/DropdownFilter";
 import format from "date-fns/format";
+import { Item } from "types";
+import { useMountEffect } from "hooks";
+
+type DateRange = {
+    start: Date,
+    end: Date
+}
 
 export const ItemList = () => {
-    const [items, setItems] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [date, setDate] = useState();
-    const isMounted = useRef(false);
+    const [items, setItems] = useState<Array<Item>>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [date, setDate] = useState<DateRange | undefined>();
 
-    useEffect(() => {
-        if (isMounted.current) return;
+    useMountEffect(() => {
         fetchItems();
-        isMounted.current = true;
-    }, []);
+    });
 
     const fetchItems = () => {
         setLoading(true);
@@ -33,14 +37,14 @@ export const ItemList = () => {
             });
     };
 
-    const filterEntries = (start, end) => {
+    const filterEntries = (start: Date, end: Date) => {
         setDate({ start, end });
     };
 
     return (
         <Container mt={9}>
             <Flex gap={2}>
-                <AddUpdateItemModal onSuccess={fetchItems} />
+                <AddUpdateItemModal editable={false} defaultValues={undefined} onSuccess={fetchItems} />
                 <DropdownFilter filter={filterEntries} />
             </Flex>
             {date !== undefined && date.start !== undefined && date.end !== undefined ? (
@@ -48,7 +52,7 @@ export const ItemList = () => {
                     <TagLabel>
                         {`${format(new Date(date.start), "dd-MM-yyyy")} - ${format(new Date(date.end), "dd-MM-yyyy")}`}
                     </TagLabel>
-                    <TagCloseButton onClick={() => setDate(undefined)}/>
+                    <TagCloseButton onClick={() => setDate(undefined)} />
                 </Tag>
             ) : null}
             {loading ? (
@@ -58,13 +62,13 @@ export const ItemList = () => {
             ) : (
                 <Box mt={6}>
                     {items
-                        ?.filter((item) =>
+                        ?.filter((item: Item) =>
                             date !== undefined && date.start !== undefined && date.end !== undefined
                                 ? new Date(item.expireDate) >= date.start && new Date(item.expireDate) < date.end
                                 : item
                         )
                         .sort((a, b) => (a.expireDate > b.expireDate ? 1 : -1))
-                        .map((item) => (
+                        .map((item: Item) => (
                             <ItemCard item={item} key={item.item_id} />
                         ))}
                 </Box>
