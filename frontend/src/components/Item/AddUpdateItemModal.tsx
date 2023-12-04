@@ -2,36 +2,46 @@ import { Box, Button, Modal, ModalOverlay, useDisclosure, ModalContent } from "@
 import { useEffect, useMemo, useState } from "react";
 import { ItemForm } from "./ItemForm";
 import { BarcodeReader } from "../BarcodeReader/BarcodeReader";
+import { FoodBlogEntryType, Item } from "types";
+import { Result } from "@zxing/library";
 
-const ViewMode = {
-    None: "none",
-    Camera: "camera",
-    Form: "Form",
-    CameraForm: "CameraForm",
-};
+enum ViewMode {
+    None,
+    Camera,
+    Form,
+    CameraForm,
+}
 
-export const AddUpdateItemModal = ({ editable = false, defaultValues = {}, onSuccess = () => {}, ...rest }) => {
-    const [viewMode, setViewMode] = useState(ViewMode.None);
-    const [barcode, setBarcode] = useState();
-    const [foodEntry, setFoodEntry] = useState();
+type AddUpdateItemModalProps = {
+    editable: boolean,
+    defaultValues: Item | undefined,
+    onSuccess: () => void,
+}
+
+export const AddUpdateItemModal = (props: AddUpdateItemModalProps) => {
+    const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.None);
+    const [barcode, setBarcode] = useState<Result>();
+    const [foodEntry, setFoodEntry] = useState<FoodBlogEntryType>();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const foodEntryValues = useMemo(() => {
-        if (foodEntry) {
-            return { title: foodEntry.product.product_name, description: foodEntry.product._keywords.join(",\n") };
+    const foodEntryValues: Item | undefined = useMemo(() => {
+        if (foodEntry !== undefined) {
+            return {
+                title: foodEntry.product.product_name,
+                description: foodEntry.product._keywords.join(",\n"),
+            } as Item;
         }
-        return {};
     }, [foodEntry]);
 
-    const cameraBarcodeFound = (barcode) => {
+    const cameraBarcodeFound = (barcode: Result) => {
         setBarcode(barcode);
     };
 
     useEffect(() => {
         if (barcode) {
             (async () => {
-                await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode.text}.json`)
+                await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode.getText()}.json`)
                     .then((res) => res.json())
                     .then((res) => setFoodEntry(res));
             })();
@@ -43,29 +53,36 @@ export const AddUpdateItemModal = ({ editable = false, defaultValues = {}, onSuc
     }, [isOpen]);
 
     useEffect(() => {
-        if (foodEntry) {
+        if (foodEntry !== undefined) {
             setViewMode(ViewMode.CameraForm);
         }
     }, [foodEntry]);
 
     return (
-        <Box {...rest} w={editable ? "100%" : "90%"}>
+        <Box w={props.editable ? "100%" : "90%"}>
             <Button w="100%" colorScheme="blue" onClick={onOpen}>
-                {editable ? "UPDATE ITEM" : "ADD ITEM"}
+                {props.editable ? "UPDATE ITEM" : "ADD ITEM"}
             </Button>
             <Modal closeOnOverlayClick={true} size="xl" onClose={onClose} isOpen={isOpen} isCentered>
                 <ModalOverlay />
                 <ModalContent>
                     {viewMode === ViewMode.Form ? (
-                        <ItemForm editable={editable} defaultValues={defaultValues} onClose={() => onClose()} onSuccess={() => onSuccess()} />
+                        <ItemForm
+                            editable={props.editable}
+                            camera="close"
+                            defaultValues={props.defaultValues}
+                            onClose={() => onClose()}
+                            onSuccess={() => props.onSuccess()}
+                        />
                     ) : viewMode === ViewMode.Camera ? (
-                        <BarcodeReader onResult={(data) => cameraBarcodeFound(data)} />
+                        <BarcodeReader onResult={(data: Result) => cameraBarcodeFound(data)} />
                     ) : viewMode === ViewMode.CameraForm ? (
                         <ItemForm
-                            editable={editable}
+                            editable={props.editable}
+                            camera="open"
                             defaultValues={foodEntryValues}
                             onClose={() => onClose()}
-                            onSuccess={() => onSuccess()}
+                            onSuccess={() => props.onSuccess()}
                             openCamera={() => setViewMode(ViewMode.Camera)}
                         />
                     ) : (

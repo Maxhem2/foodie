@@ -27,7 +27,7 @@ export const NavBar = () => {
           Foodie
         </Text>
         <Stack direction="row" align="center" spacing={4}>
-          <ThemeToggler size="lg" />
+          <ThemeToggler showLabel={false} size="lg" />
           <Button onClick={logout} colorScheme="orange">
             Logout
           </Button>

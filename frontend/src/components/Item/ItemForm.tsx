@@ -18,9 +18,24 @@ import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
 import { useEffect } from "react";
+import { Item } from "types";
 
-export const ItemForm = ({ editable = false, defaultValues = {}, onSuccess = () => {}, onClose = () => {}, ...rest }) => {
-    const restProps = { ...rest };
+type ItemFormProps = {
+    editable: boolean,
+    defaultValues: Item | undefined
+    onSuccess: () => void,
+    onClose: () => void,
+} & (OpenCamera | CloseCamera)
+
+type OpenCamera = {
+    camera: 'open'
+    openCamera: () => void
+}
+type CloseCamera = {
+    camera: 'close'
+}
+
+export const ItemForm = (props: ItemFormProps) => {
     const toast = useToast();
     const { itemId } = useParams();
     const {
@@ -31,31 +46,31 @@ export const ItemForm = ({ editable = false, defaultValues = {}, onSuccess = () 
         setValue,
         formState: { errors, isSubmitting },
     } = useForm({
-        defaultValues: { ...defaultValues },
+        defaultValues: props.defaultValues
     });
 
     useEffect(() => {
-        const formattedDefaultDate = defaultValues.expireDate ? new Date(defaultValues.expireDate).toISOString().split("T")[0] : "";
+        const formattedDefaultDate = props.defaultValues?.expireDate ? new Date(props.defaultValues.expireDate).toISOString().split("T")[0] : "";
 
-        setValue("expireDate", formattedDefaultDate);
-    }, [defaultValues.expireDate, setValue]);
+        setValue("expireDate", new Date(formattedDefaultDate));
+    }, [props.defaultValues, setValue]);
 
-    const onSubmit = async (values) => {
+    const onSubmit = async (values: Item) => {
         try {
             values = { ...values, expireDate: endOfDay(new Date(values.expireDate)) };
-            if (editable) {
+            if (props.editable) {
                 await axiosInstance.put(`/item/${itemId}`, values);
             } else {
                 await axiosInstance.post(`/item/create/`, values);
             }
             toast({
-                title: editable ? "Item Updated" : "Item Added",
+                title: props.editable ? "Item Updated" : "Item Added",
                 status: "success",
                 isClosable: true,
-                diration: 1500,
+                duration: 1500,
             });
-            onSuccess();
-            onClose();
+            props.onSuccess();
+            props.onClose();
             reset();
         } catch (err) {
             console.error(err);
@@ -63,24 +78,24 @@ export const ItemForm = ({ editable = false, defaultValues = {}, onSuccess = () 
                 title: "Something went wrong. Please try again.",
                 status: "error",
                 isClosable: true,
-                diration: 1500,
+                duration: 1500,
             });
         }
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalHeader>{editable ? "Update Item" : "ADD ITEM"}</ModalHeader>
+            <ModalHeader>{props.editable ? "Update Item" : "ADD ITEM"}</ModalHeader>
             <>
-                {restProps.openCamera !== undefined ? (
-                    <Button onClick={() => restProps.openCamera()}>
+                {props.camera === "open" ? (
+                    <Button onClick={() => props.openCamera()}>
                         <RepeatIcon />
                     </Button>
                 ) : null}
                 <ModalCloseButton />
             </>
             <ModalBody>
-                <FormControl isInvalid={errors.title}>
+                <FormControl isInvalid={errors.title !== undefined}>
                     <Input
                         placeholder="Item Title...."
                         background={useColorModeValue("gray.300", "gray.600")}
@@ -102,12 +117,11 @@ export const ItemForm = ({ editable = false, defaultValues = {}, onSuccess = () 
                     />
                     <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={errors.description}>
+                <FormControl isInvalid={errors.description !== undefined}>
                     <Textarea
                         rows={5}
                         placeholder="Add description...."
                         background={useColorModeValue("gray.300", "gray.600")}
-                        type="test"
                         variant="filled"
                         size="lg"
                         mt={6}
@@ -129,23 +143,23 @@ export const ItemForm = ({ editable = false, defaultValues = {}, onSuccess = () 
                     <Controller
                         name="expireDate"
                         control={control}
-                        defaultValue={defaultValues.expireDate}
+                        defaultValue={props.defaultValues?.expireDate}
                         rules={{
                             required: "This is a required field",
-                            validate: (value) =>
-                                !editable ? (startOfDay(new Date(value)) < startOfDay(new Date()) ? "Date must be atleast today or in future" : true) : true,
+                            validate: (value: Date) =>
+                                !props.editable ? (startOfDay(new Date(value)) < startOfDay(new Date()) ? "Date must be atleast today or in future" : true) : true,
                         }}
                         render={({ field }) => (
                             <div>
                                 <Input
+                                    {...field}
                                     type="date"
                                     placeholder="Expiration date...."
-                                    value={field.value || ""}
+                                    value={field.value.toISOString() || ""}
                                     onChange={(e) => e.target.value}
                                     variant="filled"
                                     size="lg"
                                     mt={6}
-                                    {...field}
                                 />
                                 {errors.expireDate && <p>{errors.expireDate.message}</p>}{" "}
                             </div>
@@ -155,11 +169,11 @@ export const ItemForm = ({ editable = false, defaultValues = {}, onSuccess = () 
             </ModalBody>
             <ModalFooter>
                 <Stack direction="row" spacing={4}>
-                    <Button onClick={onClose} disabled={isSubmitting}>
+                    <Button onClick={() => props.onClose()} disabled={isSubmitting}>
                         Close
                     </Button>
-                    <Button colorScheme="blue" type="submit" isLoading={isSubmitting} loadingText={editable ? "Updating" : "Creating"}>
-                        {editable ? "Update" : "Create"}
+                    <Button colorScheme="blue" type="submit" isLoading={isSubmitting} loadingText={props.editable ? "Updating" : "Creating"}>
+                        {props.editable ? "Update" : "Create"}
                     </Button>
                 </Stack>
             </ModalFooter>
