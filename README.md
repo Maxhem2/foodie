@@ -1,6 +1,6 @@
-# ToDoListApp
+# Foodie
 
-ToDoList App using FastAPI and MongoDB on the backend and ReactJS on the frontend.
+Food managment App using FastAPI and MongoDB on the backend and ReactJS on the frontend.
 
 <hr>
 
