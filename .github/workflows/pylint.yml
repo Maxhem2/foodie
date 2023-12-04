@@ -30,4 +30,4 @@ jobs:
 
     - name: Analysing the code with pylint
       run: |
-        pylint backend --output-format=colorized
+        pylint backend --output-format=colorized --extension-pkg-whitelist='pydantic'
