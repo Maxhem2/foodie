@@ -45,6 +45,6 @@ async def test_create_user(test_app):
     response = await test_app.post("/api/v1/users/create", json=user_data)
 
     # Assertions: Verify the response
-    assert response.status_code == 201  # 201 is the status code for successful creation
+    assert response.status_code == 201
     created_user = response.json()
     assert created_user["email"] == email
