@@ -22,9 +22,9 @@ export const BarcodeReader = (props: BarcodeReaderProps) => {
                     },
                 },
                 videoRef.current,
-                (result, error) => {
+                (result: Result) => {
                     if (result) setBarcodeData(result);
-                    if (error) console.error(error);
+                    // if (error) console.error(error);
                 }
             );
             return () => {
@@ -33,7 +33,7 @@ export const BarcodeReader = (props: BarcodeReaderProps) => {
         } else {
             props.onResult(barcodeData);
         }
-    }, [barcodeData, props.onResult, videoRef]);
+    }, [barcodeData, props, videoRef]);
 
     return <video ref={videoRef} />;
 };

@@ -81,6 +81,7 @@ interface Product {
     food_groups_tags: string[];
     "fruits-vegetables-nuts_100g_estimate": number;
     generic_name: string;
+    generic_name_de: string;
     generic_name_en: string;
     generic_name_en_debug_tags: any[];
     id: string;
@@ -225,6 +226,7 @@ interface Product {
     popularity_key: number;
     popularity_tags: string[];
     product_name: string;
+    product_name_de: string;
     product_name_en: string;
     product_name_en_debug_tags: any[];
     product_name_en_imported: string;

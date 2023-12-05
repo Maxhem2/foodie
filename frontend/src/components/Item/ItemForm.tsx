@@ -17,8 +17,8 @@ import { endOfDay, startOfDay } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
-import { useEffect } from "react";
 import { Item } from "types";
+import { useMountEffect } from "hooks";
 
 type ItemFormProps = {
     editable: boolean,
@@ -49,11 +49,13 @@ export const ItemForm = (props: ItemFormProps) => {
         defaultValues: props.defaultValues
     });
 
-    useEffect(() => {
-        const formattedDefaultDate = props.defaultValues?.expireDate ? new Date(props.defaultValues.expireDate).toISOString().split("T")[0] : "";
+    useMountEffect(() => {
+        const formattedDefaultDate = props.defaultValues?.expireDate
+            ? new Date(props.defaultValues.expireDate).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0];
 
         setValue("expireDate", new Date(formattedDefaultDate));
-    }, [props.defaultValues, setValue]);
+    });
 
     const onSubmit = async (values: Item) => {
         try {
@@ -143,27 +145,31 @@ export const ItemForm = (props: ItemFormProps) => {
                     <Controller
                         name="expireDate"
                         control={control}
-                        defaultValue={props.defaultValues?.expireDate}
+                        defaultValue={props.defaultValues !== undefined && props.defaultValues?.expireDate !== undefined
+                            ? new Date(props.defaultValues.expireDate)
+                            : new Date()}
                         rules={{
                             required: "This is a required field",
                             validate: (value: Date) =>
                                 !props.editable ? (startOfDay(new Date(value)) < startOfDay(new Date()) ? "Date must be atleast today or in future" : true) : true,
                         }}
-                        render={({ field }) => (
-                            <div>
-                                <Input
-                                    {...field}
-                                    type="date"
-                                    placeholder="Expiration date...."
-                                    value={field.value.toISOString() || ""}
-                                    onChange={(e) => e.target.value}
-                                    variant="filled"
-                                    size="lg"
-                                    mt={6}
-                                />
-                                {errors.expireDate && <p>{errors.expireDate.message}</p>}{" "}
-                            </div>
-                        )}
+                        render={({ field }) => {
+                            return (
+                                <div>
+                                    <Input
+                                        {...field}
+                                        type="date"
+                                        placeholder="Expiration date...."
+                                        value={field.value !== undefined && field.value instanceof Date ? field.value.toISOString().split("T")[0] : field.value}
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => field.onChange(event.target.value)}
+                                        variant="filled"
+                                        size="lg"
+                                        mt={6}
+                                    />
+                                    {errors.expireDate && <p>{errors.expireDate.message}</p>}{" "}
+                                </div>
+                            );
+                        }}
                     />
                 </FormControl>
             </ModalBody>
