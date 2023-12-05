@@ -9,8 +9,5 @@
     "rules": {
         "semi": "warn",
         "react/jsx-key": "warn"
-        // "quotes": ["warn", "double"]
-        // "no-debugger": "warn",
-        // "no-console": "warn"
     }
 }
