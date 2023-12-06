@@ -1,9 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { BrowserMultiFormatReader } from "@zxing/library";
+import { BrowserMultiFormatReader, Result } from "@zxing/library";
 
-export const BarcodeReader = ({ onResult = (data) => data, onError = () => {} }) => {
+type BarcodeReaderProps = {
+    onResult: (data: Result) => void;
+}
+
+export const BarcodeReader = (props: BarcodeReaderProps) => {
     const videoRef = useRef(null);
-    const [barcodeData, setBarcodeData] = useState();
+    const [barcodeData, setBarcodeData] = useState<Result>();
     const reader = useRef(new BrowserMultiFormatReader());
 
     useEffect(() => {
@@ -18,18 +22,18 @@ export const BarcodeReader = ({ onResult = (data) => data, onError = () => {} })
                     },
                 },
                 videoRef.current,
-                (result, error) => {
+                (result: Result) => {
                     if (result) setBarcodeData(result);
-                    if (error) console.error(error);
+                    // if (error) console.error(error);
                 }
             );
             return () => {
                 currentReader.reset();
             };
         } else {
-            onResult(barcodeData);
+            props.onResult(barcodeData);
         }
-    }, [barcodeData, onResult, videoRef]);
+    }, [barcodeData, props, videoRef]);
 
     return <video ref={videoRef} />;
 };

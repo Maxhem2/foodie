@@ -19,22 +19,30 @@ import {
     Heading,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { addDays, endOfDay, startOfDay, endOfYear } from "date-fns";
+import { addDays, endOfDay, startOfDay, endOfYear, endOfMonth } from "date-fns";
 
-const DropdownFilter = ({ filter = (start, end) => {} }) => {
+type DropdownFilterProps = {
+    filter: (start: Date, end: Date) => void;
+}
+
+const DropdownFilter = (props: DropdownFilterProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState();
+    const [startDate, setStartDate] = useState<Date>(new Date());
+    const [endDate, setEndDate] = useState<Date>(endOfMonth(new Date()));
 
-    const filterDate = (start, end) => {
-        filter(start, end);
+    const filterDate = (start: Date, end: Date) => {
+        props.filter(start, end);
     };
 
     const modalOnSave = () => {
-        filterDate(startOfDay(new Date(startDate)), endOfDay(new Date(endDate)));
+        if (endDate !== undefined) {
+            filterDate(startOfDay(new Date(startDate)), endOfDay(new Date(endDate)));
+        }
         onClose();
     };
+
+    console.log(startDate);
 
     return (
         <Menu>
@@ -58,11 +66,24 @@ const DropdownFilter = ({ filter = (start, end) => {} }) => {
                                 <Flex justify={"space-between"}>
                                     <Flex direction={"column"}>
                                         <Heading size="md"> Start </Heading>
-                                        <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                                        <input type="date"
+                                            value={startDate.toISOString().split("T")[0]}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                if (e !== undefined) {
+                                                    setStartDate(new Date(e.target.value));
+                                                };
+                                            }} />
                                     </Flex>
                                     <Flex direction={"column"}>
                                         <Heading size="md"> Ende </Heading>
-                                        <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                                        <input type="date"
+                                            value={endDate?.toISOString().split("T")[0]}
+                                            onChange={(e) => {
+                                                if (e !== undefined) {
+                                                    setEndDate(new Date(e.target.value));
+                                                };
+                                            }}
+                                        />
                                     </Flex>
                                 </Flex>
                             </ModalBody>

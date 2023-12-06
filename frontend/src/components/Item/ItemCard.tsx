@@ -2,15 +2,19 @@ import { Badge, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import endOfDay from "date-fns/endOfDay";
 import { useCallback, useMemo } from "react";
+import { Item } from "types";
 
-export const ItemCard = ({ item }) => {
+type ItemCardProps = {
+    item: Item;
+}
+
+export const ItemCard = (props: ItemCardProps) => {
     const calculateExpireDate = useCallback(() => {
-        if (item.expireDate !== null && item.expireDate !== undefined) {
-            const timeDifference = endOfDay(new Date(item.expireDate)) - endOfDay(new Date());
-            const daysDifference = timeDifference / (1000 * 3600 * 24);
-            return Math.round(daysDifference);
-        }
-    }, [item.expireDate]);
+        const timeDifference = (endOfDay(new Date(props.item.expireDate))).getTime() - (endOfDay(new Date())).getTime();
+        const daysDifference = timeDifference / (1000 * 3600 * 24);
+        return Math.round(daysDifference);
+
+    }, [props.item]);
 
     const calculatedExpireDate = useMemo(() => calculateExpireDate(), [calculateExpireDate]);
 
@@ -33,9 +37,9 @@ export const ItemCard = ({ item }) => {
                 cursor: "pointer",
                 transform: "translateY(-3px)",
             }}
-            onClick={() => navigate(`/${item.item_id}`, { replace: true })}
+            onClick={() => navigate(`/${props.item.item_id}`, { replace: true })}
         >
-            <Text>{item.title}</Text>
+            <Text>{props.item.title}</Text>
             <Badge colorScheme={colorSchemeSwitch()}>
                 {calculatedExpireDate < 0 ? `Ist seit ${Math.abs(calculatedExpireDate)} Tagen abgelaufen` : `Läuft in ${calculatedExpireDate} Tagen ab`}
             </Badge>

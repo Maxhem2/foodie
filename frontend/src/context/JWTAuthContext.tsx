@@ -2,8 +2,21 @@ import { createContext, useEffect, useReducer, useRef } from "react";
 import axiosInstance from "../services/axios";
 import { validateToken } from "../utils/jwt";
 import { resetSession, setSession } from "../utils/session";
+import { User } from "types";
 
-const initialState = {
+type State = {
+  isAuthenticated: boolean,
+  isInitialized: boolean,
+  user: User | null
+}
+
+type InitializeAction = { type: 'INITIALIZE'; payload: { isAuthenticated: boolean; user: User | null } }
+type LoginAction = { type: 'LOGIN'; payload: { user: User | null } }
+type LogoutAction = { type: 'LOGOUT' }
+
+type Action = InitializeAction | LoginAction | LogoutAction
+
+const initialState: State = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
@@ -11,12 +24,12 @@ const initialState = {
 
 export const AuthContext = createContext({
   ...initialState,
-  login: () => Promise.resolve(),
+  login: (email: string, password: string) => Promise.resolve(),
   logout: () => Promise.resolve(),
 });
 
 const handlers = {
-  INITIALIZE: (state, action) => {
+  INITIALIZE: (state: State, action: InitializeAction) => {
     const { isAuthenticated, user } = action.payload;
 
     return {
@@ -26,7 +39,7 @@ const handlers = {
       user,
     };
   },
-  LOGIN: (state, action) => {
+  LOGIN: (state: State, action: LoginAction) => {
     const { user } = action.payload;
 
     return {
@@ -35,7 +48,7 @@ const handlers = {
       user,
     };
   },
-  LOGOUT: (state) => {
+  LOGOUT: (state: State) => {
     return {
       ...state,
       isAuthenticated: false,
@@ -44,10 +57,12 @@ const handlers = {
   },
 };
 
-const reducer = (state, action) =>
-  handlers[action.type] ? handlers[action.type](state, action) : state;
+const reducer = (state: State, action: Action) => {
+  const handler = handlers[action.type] as (state: State, action: Action) => State;
+  return handler ? handler(state, action) : state;
+};
 
-export const AuthProvider = (props) => {
+export const AuthProvider = (props: any) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const isMounted = useRef(false);
@@ -93,7 +108,7 @@ export const AuthProvider = (props) => {
     isMounted.current = true;
   }, []);
 
-  const getTokens = async (email, password) => {
+  const getTokens = async (email: string, password: string) => {
     const formData = new FormData();
     formData.append("username", email);
     formData.append("password", password);
@@ -105,7 +120,7 @@ export const AuthProvider = (props) => {
     }
   };
 
-  const login = async (email, password) => {
+  const login = async (email: string, password: string) => {
     try {
       await getTokens(email, password);
       const response = await axiosInstance.get("/users/me");
@@ -130,8 +145,8 @@ export const AuthProvider = (props) => {
     <AuthContext.Provider
       value={{
         ...state,
-        login,
-        logout,
+        login: login,
+        logout: (async () => logout()),
       }}
     >
       {children}

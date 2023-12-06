@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
-export const PublicRoute = (props) => {
-  const { children } = props;
+type PublicRouteProps = {
+  children: ReactNode
+}
+
+export const PublicRoute = (props: PublicRouteProps) => {
   const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,5 +23,5 @@ export const PublicRoute = (props) => {
   if (!isVerified) {
     return null;
   }
-  return <>{children}</>;
+  return <>{props.children}</>;
 };

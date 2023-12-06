@@ -13,17 +13,18 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../services/axios";
 import { ThemeToggler } from "../Theme/ThemeToggler";
 import FallingStars from "./FallingStars";
+import { UserCreationInformation } from "types";
 
 export const Register = () => {
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm<UserCreationInformation>();
   const navigate = useNavigate();
   const toast = useToast();
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: UserCreationInformation) => {
     try {
       await axiosInstance.post("/users/create", values);
       toast({
@@ -33,11 +34,11 @@ export const Register = () => {
         duration: 1500,
       });
       navigate("/login", { replace: true });
-    } catch (err) {
+    } catch (err: any) {
       toast({
         title: `${err.response.data.detail}`,
         status: "error",
-        isCloseable: true,
+        isClosable: true,
         duration: 1500,
       });
     }
@@ -54,7 +55,7 @@ export const Register = () => {
       >
         <Heading mb={6}>Register</Heading>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FormControl isInvalid={errors.email}>
+          <FormControl isInvalid={errors.email !== undefined}>
             <Input
               placeholder="Email"
               background={useColorModeValue("gray.300", "gray.600")}
@@ -69,7 +70,7 @@ export const Register = () => {
               {errors.email && errors.email.message}
             </FormErrorMessage>
           </FormControl>
-          <FormControl isInvalid={errors.username}>
+          <FormControl isInvalid={errors.username !== undefined}>
             <Input
               placeholder="username"
               background={useColorModeValue("gray.300", "gray.600")}
@@ -93,7 +94,7 @@ export const Register = () => {
               {errors.username && errors.username.message}
             </FormErrorMessage>
           </FormControl>
-          <FormControl isInvalid={errors.password}>
+          <FormControl isInvalid={errors.password !== undefined}>
             <Input
               placeholder="Password"
               background={useColorModeValue("gray.300", "gray.600")}

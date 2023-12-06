@@ -1,4 +1,3 @@
-import React from "react";
 import "./FallingStars.css";
 
 const FallingStars = () => {

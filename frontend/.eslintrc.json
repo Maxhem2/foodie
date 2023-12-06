@@ -1,0 +1,13 @@
+{
+    "extends": ["react-app"],
+    "plugins": ["react"],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "rules": {
+        "semi": "warn",
+        "react/jsx-key": "warn"
+    }
+}
