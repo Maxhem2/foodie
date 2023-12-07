@@ -15,6 +15,8 @@ class ItemService:
     @staticmethod
     async def create_item(user: User, data: ItemCreate) -> Item:
         item = Item(**data.dict(), owner=user)
+
+       
         
         return await item.insert()
     
@@ -38,12 +40,12 @@ class ItemService:
         return None
     
     @staticmethod
-    async def create_tag(tag_data: dict) -> Tag:
-        tag = Tag(**tag_data)
+    async def create_tag(name) -> Tag:
+        tag = Tag(**name)
         return await tag.insert()
 
     @staticmethod
-    async def create_tags(tag_data_list: List[dict]) -> List[Tag]:
+    async def create_tags(tag_data_list: List[str]) -> List[Tag]:
         tags = [Tag(**tag_data) for tag_data in tag_data_list]
         return await Tag.insert_many(tags)
 
@@ -66,10 +68,10 @@ class ItemService:
         return []
     
     @staticmethod
-    async def update_tag(tag_id: UUID, tag_data: dict) -> Tag:
+    async def update_tag(tag_id: UUID, name: str) -> Tag:
         tag = await ItemService.retrieve_tag(tag_id)
         if tag:
-            await tag.update({"$set": tag_data})
+            await tag.update({"$set": name})
             await tag.save()
         return tag
 

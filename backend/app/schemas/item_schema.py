@@ -23,3 +23,18 @@ class ItemOut(BaseModel):
     created_at: datetime
     updated_at: datetime
     tags: Optional[List[UUID]] = []
+
+
+class TagCreate(BaseModel):
+    tag_id: UUID
+    name: str
+class TagUpdate(BaseModel):
+    tag_id: UUID
+    name: Optional[str]
+class TagOut(BaseModel):
+    tag_id: UUID
+    name: Optional[str]
+
+
+
+ 
