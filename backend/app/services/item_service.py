@@ -1,6 +1,7 @@
 from typing import List
 from uuid import UUID
 from datetime import datetime
+import uuid
 from app.models.user_model import User
 from app.models.item_model import Item
 from app.models.item_model import Tag  # Import the Tag model
@@ -14,11 +15,21 @@ class ItemService:
     
     @staticmethod
     async def create_item(user: User, data: ItemCreate) -> Item:
-        item = Item(**data.dict(), owner=user)
+        if data.tag is not None and data.tag != "":
+            print(data.tag)
+            uuId = uuid.UUID(data.tag)
+            x = await ItemService.retrieve_tag(uuId)
+            print(type(x))
+            print(x)
+            item = Item(**data.dict(), owner=user)
+            item.tag = x
+            # item.tag = tag  # Set the tag attribute separately
+        else:
+            item = Item(**data.dict(), owner=user)
 
-       
-        
-        return await item.insert()
+        await item.insert()
+
+        return item
     
     @staticmethod
     async def retrieve_item(current_user: User, item_id: UUID):

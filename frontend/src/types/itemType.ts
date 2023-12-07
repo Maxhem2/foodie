@@ -1,4 +1,3 @@
-import { TagSchema } from "./tagType";
 import { UserSchema } from "./userType";
 
 export type ItemSchema = {
@@ -9,5 +8,5 @@ export type ItemSchema = {
     created_at: Date;
     updated_at: Date;
     owner: UserSchema;
-    tags: TagSchema[]
+    tag?: string
 };

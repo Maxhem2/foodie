@@ -7,13 +7,13 @@ class ItemCreate(BaseModel):
     title: str = Field(..., title='Title', max_length=55, min_length=1)
     description: str = Field(..., title='Description', max_length=755, min_length=1)
     expireDate: datetime = Field(..., title="ExpireDate")
-    tags: Optional[List[UUID]] = []
+    tag: Optional[str]
 
 class ItemUpdate(BaseModel):
     title: Optional[str] = Field(..., title='Title', max_length=55, min_length=1)
     description: Optional[str] = Field(..., title='Description', max_length=755, min_length=1)
     expireDate: datetime = Field(..., title="ExpireDate")
-    tags: Optional[List[UUID]] = []
+    tag: Optional[UUID]
 
 class ItemOut(BaseModel):
     item_id: UUID
@@ -22,18 +22,7 @@ class ItemOut(BaseModel):
     description: str
     created_at: datetime
     updated_at: datetime
-    tags: Optional[List[UUID]] = []
-
-
-class TagCreate(BaseModel):
-    tag_id: UUID
-    name: str
-class TagUpdate(BaseModel):
-    tag_id: UUID
-    name: Optional[str]
-class TagOut(BaseModel):
-    tag_id: UUID
-    name: Optional[str]
+    tag: Optional[UUID]
 
 
 

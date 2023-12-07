@@ -20,10 +20,12 @@ import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
 import { ItemSchema } from "types";
 import { useMountEffect } from "hooks";
-import { useState } from "react";
-import { TagSchema } from "types/tagType";
+import { useEffect, useRef, useState } from "react";
+import { TagCreationInformation, TagSchema } from "types/tagType";
 import { AxiosResponse } from "axios";
-import { Autocomplete, Option } from "chakra-ui-simple-autocomplete";
+import { AutoComplete, AutoCompleteCreatable, AutoCompleteInput, AutoCompleteItem, AutoCompleteList, AutoCompleteTag, useAutoCompleteContext } from "@choc-ui/chakra-autocomplete";
+import { AddEntry } from "components/AutoComplete/AddEntry";
+import { validateHeaderName } from "http";
 
 type ItemFormProps = {
     editable: boolean,
@@ -44,10 +46,11 @@ export const ItemForm = (props: ItemFormProps) => {
     const toast = useToast();
     const { itemId } = useParams();
 
-    const [tag, setTag] = useState<string>();
-    const [tags, setTags] = useState<Array<TagSchema>>();
-    const [autocompleteOptions, setAutoCompleteOptions] = useState<Array<Option>>([]);
-    const [selectedOptions, setSelectedOptions] = useState<Array<Option>>([]);
+    const [tagsFetched, setTagsFetched] = useState<Array<TagSchema>>([]);
+
+    const [autoCompleteValue, setAutoCompleteValue] = useState<string>();
+
+    console.log(autoCompleteValue);
 
     const {
         handleSubmit,
@@ -66,23 +69,18 @@ export const ItemForm = (props: ItemFormProps) => {
             : new Date().toISOString().split("T")[0];
 
         setValue("expireDate", new Date(formattedDefaultDate));
-        // try {
-        //     await axiosInstance.get("/items/list-tags/").then((res: AxiosResponse<TagSchema[]>) => {
-        //         if (res.status === 200 || res.status === 201 || res.data !== undefined) {
-        //             setTags(res.data);
-        //             const items: Array<Option> = res.data.map((item: TagSchema) => {
-        //                 return {
-        //                     value: item.tag_id,
-        //                     label: item.name,
-        //                 } as Option;
-        //             });
-        //             setAutoCompleteOptions(items);
-        //         }
-        //     });
-        // }
-        // catch (err) {
-        //     console.log(err);
-        // }
+        (async () => {
+            try {
+                await axiosInstance.get("tag/list-tags").then((res: AxiosResponse<TagSchema[]>) => {
+                    if (res.status === 200 || res.status === 201 || res.data !== undefined) {
+                        setTagsFetched(res.data);
+                    }
+                });
+            }
+            catch (err) {
+                console.log(err);
+            }
+        })();
     });
 
     const onSubmit = async (values: ItemSchema) => {
@@ -113,14 +111,24 @@ export const ItemForm = (props: ItemFormProps) => {
         }
     };
 
-
-    const createTag = async () => {
-        if (tag !== undefined) {
-
-
-            await axiosInstance.post("item/create-tag", tag);
+    const fetchTags = async () => {
+        try {
+            await axiosInstance.get("tag/list-tags").then(res => {
+                const data: TagSchema[] = res.data;
+                setTagsFetched(data);
+                console.log("test");
+            });
+        }
+        catch (err) {
+            console.log(err);
         }
     };
+
+    useEffect(() => {
+        console.log(autoCompleteValue); 
+        const tagUUIds = tagsFetched.find((tag) => autoCompleteValue === tag._id)?.tag_id;
+        if (tagUUIds) setValue("tag", tagUUIds);
+    }, [autoCompleteValue, setValue, tagsFetched]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -178,11 +186,37 @@ export const ItemForm = (props: ItemFormProps) => {
                     />
                     <FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
                 </FormControl>
-                <Input
-                    value={tag}
-                    onChange={(e) => setTag(e.target.value)}
-                />
-                <Button onClick={() => createTag()} />
+                <AutoComplete
+                    openOnFocus
+                    closeOnBlur
+                    creatable
+                    value={autoCompleteValue}
+                    onChange={(newVal) => setAutoCompleteValue(newVal)}
+                >
+                    <AutoCompleteInput variant="filled">
+                        {({ tags }) =>
+                            tags.map((tag, tid) => (
+                                <AutoCompleteTag
+                                    key={tid}
+                                    label={tagsFetched.find((f) => f._id === tag.label)?.name ?? ""}
+                                    onRemove={tag.onRemove}
+                                />
+                            ))
+                        }
+                    </AutoCompleteInput>
+                    <AutoCompleteList>
+                        {tagsFetched.map((tag, tagId) => (
+                            <AutoCompleteItem
+                                key={`option-${tagId}`}
+                                value={tag}
+                                textTransform="capitalize"
+                            >
+                                {tag.name}
+                            </AutoCompleteItem>
+                        ))}
+                        <AddEntry fetchTags={() => fetchTags()} />
+                    </AutoCompleteList>
+                </AutoComplete>
                 <FormControl>
                     <Controller
                         name="expireDate"

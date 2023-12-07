@@ -1,4 +1,5 @@
 export type TagSchema = {
+    _id: string;
     tag_id: string;
     name: string;
 };
