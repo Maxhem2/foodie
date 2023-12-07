@@ -1,4 +1,4 @@
-export type FoodBlogEntryType = {
+export type FoodBlogEntrySchema = {
     code: string;
     product: Product;
     status: number;

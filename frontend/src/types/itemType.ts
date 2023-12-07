@@ -1,11 +1,13 @@
-import { User } from "./userType";
+import { TagSchema } from "./tagType";
+import { UserSchema } from "./userType";
 
-export type Item = {
+export type ItemSchema = {
     item_id: string;
     expireDate: Date;
     title: string;
     description: string;
     created_at: Date;
     updated_at: Date;
-    owner: User;
+    owner: UserSchema;
+    tags: TagSchema[]
 };

@@ -5,7 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { ThemeToggler } from "../Theme/ThemeToggler";
 import { useState } from "react";
 import FallingStars from "./FallingStars";
-import { LoginParams } from "types";
+import { LoginSchema } from "types";
 
 const slogans: string[] = [
     "Freshness at your fingertips!",
@@ -30,12 +30,12 @@ export const Login = () => {
         handleSubmit,
         register,
         formState: { errors, isSubmitting },
-    } = useForm<LoginParams>();
+    } = useForm<LoginSchema>();
     const navigate = useNavigate();
     const { login } = useAuth();
     const toast = useToast();
 
-    const onSubmit = async (values: LoginParams) => {
+    const onSubmit = async (values: LoginSchema) => {
         try {
             await login(values.email, values.password);
         } catch (error) {

@@ -2,10 +2,10 @@ import { Badge, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import endOfDay from "date-fns/endOfDay";
 import { useCallback, useMemo } from "react";
-import { Item } from "types";
+import { ItemSchema } from "types";
 
 type ItemCardProps = {
-    item: Item;
+    item: ItemSchema;
 }
 
 export const ItemCard = (props: ItemCardProps) => {

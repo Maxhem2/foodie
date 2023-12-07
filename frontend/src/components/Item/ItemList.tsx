@@ -5,7 +5,7 @@ import { AddUpdateItemModal } from "./AddUpdateItemModal";
 import { ItemCard } from "./ItemCard";
 import DropdownFilter from "../Drowdown/DropdownFilter";
 import format from "date-fns/format";
-import { Item } from "types";
+import { ItemSchema } from "types";
 import { useMountEffect } from "hooks";
 
 type DateRange = {
@@ -14,7 +14,7 @@ type DateRange = {
 }
 
 export const ItemList = () => {
-    const [items, setItems] = useState<Array<Item>>([]);
+    const [items, setItems] = useState<Array<ItemSchema>>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [date, setDate] = useState<DateRange | undefined>();
 
@@ -62,13 +62,13 @@ export const ItemList = () => {
             ) : (
                 <Box mt={6}>
                     {items
-                        ?.filter((item: Item) =>
+                        ?.filter((item: ItemSchema) =>
                             date !== undefined && date.start !== undefined && date.end !== undefined
                                 ? new Date(item.expireDate) >= date.start && new Date(item.expireDate) < date.end
                                 : item
                         )
                         .sort((a, b) => (a.expireDate > b.expireDate ? 1 : -1))
-                        .map((item: Item) => (
+                        .map((item: ItemSchema) => (
                             <ItemCard item={item} key={item.item_id} />
                         ))}
                 </Box>

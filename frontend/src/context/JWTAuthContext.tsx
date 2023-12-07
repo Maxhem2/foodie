@@ -2,16 +2,16 @@ import { createContext, useEffect, useReducer, useRef } from "react";
 import axiosInstance from "../services/axios";
 import { validateToken } from "../utils/jwt";
 import { resetSession, setSession } from "../utils/session";
-import { User } from "types";
+import { UserSchema } from "types";
 
 type State = {
   isAuthenticated: boolean,
   isInitialized: boolean,
-  user: User | null
+  user: UserSchema | null
 }
 
-type InitializeAction = { type: 'INITIALIZE'; payload: { isAuthenticated: boolean; user: User | null } }
-type LoginAction = { type: 'LOGIN'; payload: { user: User | null } }
+type InitializeAction = { type: 'INITIALIZE'; payload: { isAuthenticated: boolean; user: UserSchema | null } }
+type LoginAction = { type: 'LOGIN'; payload: { user: UserSchema | null } }
 type LogoutAction = { type: 'LOGOUT' }
 
 type Action = InitializeAction | LoginAction | LogoutAction

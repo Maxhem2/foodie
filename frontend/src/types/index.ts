@@ -1,4 +1,4 @@
 export * from "./userType";
 export * from "./itemType";
-export type { FoodBlogEntryType } from "./foodBlogEntryType";
+export type { FoodBlogEntrySchema as FoodBlogEntryType } from "./foodBlogEntryType";
 export * from "./loginType";

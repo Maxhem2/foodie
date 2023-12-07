@@ -2,7 +2,7 @@ import { Box, Button, Modal, ModalOverlay, useDisclosure, ModalContent, ModalBod
 import { useEffect, useMemo, useState } from "react";
 import { ItemForm } from "./ItemForm";
 import { BarcodeReader } from "../BarcodeReader/BarcodeReader";
-import { FoodBlogEntryType, Item } from "types";
+import { FoodBlogEntryType, ItemSchema } from "types";
 import { Result } from "@zxing/library";
 import { EditIcon, SearchIcon } from "@chakra-ui/icons";
 
@@ -15,7 +15,7 @@ enum ViewMode {
 
 type AddUpdateItemModalProps = {
     editable: boolean,
-    defaultValues: Item | undefined,
+    defaultValues: ItemSchema | undefined,
     onSuccess: () => void,
 }
 
@@ -26,14 +26,14 @@ export const AddUpdateItemModal = (props: AddUpdateItemModalProps) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const foodEntryValues: Item | undefined = useMemo(() => {
+    const foodEntryValues: ItemSchema | undefined = useMemo(() => {
         if (foodEntry !== undefined && foodEntry.status !== 0) {
             const title = foodEntry.product.product_name || foodEntry.product.product_name_de;
             const description = foodEntry.product.generic_name_de || foodEntry.product.generic_name || foodEntry.product._keywords.join(',');
             return {
                 title: title,
                 description: description,
-            } as Item;
+            } as ItemSchema;
         }
     }, [foodEntry]);
 

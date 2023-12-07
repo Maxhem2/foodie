@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     FormControl,
     FormErrorMessage,
@@ -17,12 +18,16 @@ import { endOfDay, startOfDay } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
-import { Item } from "types";
+import { ItemSchema } from "types";
 import { useMountEffect } from "hooks";
+import { useState } from "react";
+import { TagSchema } from "types/tagType";
+import { AxiosResponse } from "axios";
+import { Autocomplete, Option } from "chakra-ui-simple-autocomplete";
 
 type ItemFormProps = {
     editable: boolean,
-    defaultValues: Item | undefined
+    defaultValues: ItemSchema | undefined
     onSuccess: () => void,
     onClose: () => void,
 } & (OpenCamera | CloseCamera)
@@ -38,6 +43,12 @@ type CloseCamera = {
 export const ItemForm = (props: ItemFormProps) => {
     const toast = useToast();
     const { itemId } = useParams();
+
+    const [tag, setTag] = useState<string>();
+    const [tags, setTags] = useState<Array<TagSchema>>();
+    const [autocompleteOptions, setAutoCompleteOptions] = useState<Array<Option>>([]);
+    const [selectedOptions, setSelectedOptions] = useState<Array<Option>>([]);
+
     const {
         handleSubmit,
         register,
@@ -55,9 +66,26 @@ export const ItemForm = (props: ItemFormProps) => {
             : new Date().toISOString().split("T")[0];
 
         setValue("expireDate", new Date(formattedDefaultDate));
+        // try {
+        //     await axiosInstance.get("/items/list-tags/").then((res: AxiosResponse<TagSchema[]>) => {
+        //         if (res.status === 200 || res.status === 201 || res.data !== undefined) {
+        //             setTags(res.data);
+        //             const items: Array<Option> = res.data.map((item: TagSchema) => {
+        //                 return {
+        //                     value: item.tag_id,
+        //                     label: item.name,
+        //                 } as Option;
+        //             });
+        //             setAutoCompleteOptions(items);
+        //         }
+        //     });
+        // }
+        // catch (err) {
+        //     console.log(err);
+        // }
     });
 
-    const onSubmit = async (values: Item) => {
+    const onSubmit = async (values: ItemSchema) => {
         try {
             values = { ...values, expireDate: endOfDay(new Date(values.expireDate)) };
             if (props.editable) {
@@ -82,6 +110,15 @@ export const ItemForm = (props: ItemFormProps) => {
                 isClosable: true,
                 duration: 1500,
             });
+        }
+    };
+
+
+    const createTag = async () => {
+        if (tag !== undefined) {
+
+
+            await axiosInstance.post("item/create-tag", tag);
         }
     };
 
@@ -141,6 +178,11 @@ export const ItemForm = (props: ItemFormProps) => {
                     />
                     <FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
                 </FormControl>
+                <Input
+                    value={tag}
+                    onChange={(e) => setTag(e.target.value)}
+                />
+                <Button onClick={() => createTag()} />
                 <FormControl>
                     <Controller
                         name="expireDate"

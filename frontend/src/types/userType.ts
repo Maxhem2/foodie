@@ -1,4 +1,4 @@
-export type User = {
+export type UserSchema = {
     disabled: boolean | null;
     email: string;
     first_name: string | null;

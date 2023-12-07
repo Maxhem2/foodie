@@ -3,11 +3,11 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../services/axios";
 import { AddUpdateItemModal } from "./AddUpdateItemModal";
-import { Item } from "types";
+import { ItemSchema } from "types";
 import { useMountEffect } from "hooks";
 
 export const ItemDetail = () => {
-    const [item, setItem] = useState<Item | undefined>();
+    const [item, setItem] = useState<ItemSchema | undefined>();
     const [loading, setLoading] = useState<boolean>(true);
     const { itemId } = useParams();
     const navigate = useNavigate();
