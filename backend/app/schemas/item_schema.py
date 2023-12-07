@@ -1,19 +1,19 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Union
 from uuid import UUID
 from pydantic import BaseModel, Field
 
 class ItemCreate(BaseModel):
     title: str = Field(..., title='Title', max_length=55, min_length=1)
-    description: str = Field(..., title='Title', max_length=755, min_length=1)
-    expireDate: datetime = Field(..., title="ExpireDate" )
-    
-    
+    description: str = Field(..., title='Description', max_length=755, min_length=1)
+    expireDate: datetime = Field(..., title="ExpireDate")
+    tags: Optional[List[UUID]] = []
+
 class ItemUpdate(BaseModel):
     title: Optional[str] = Field(..., title='Title', max_length=55, min_length=1)
-    description: Optional[str] = Field(..., title='Title', max_length=755, min_length=1)
+    description: Optional[str] = Field(..., title='Description', max_length=755, min_length=1)
     expireDate: datetime = Field(..., title="ExpireDate")
-    
+    tags: Optional[List[UUID]] = []
 
 class ItemOut(BaseModel):
     item_id: UUID
@@ -22,4 +22,4 @@ class ItemOut(BaseModel):
     description: str
     created_at: datetime
     updated_at: datetime
-    
+    tags: Optional[List[UUID]] = []
