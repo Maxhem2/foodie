@@ -40,7 +40,7 @@ class ItemService:
         return None
     
     @staticmethod
-    async def create_tag(name) -> Tag:
+    async def create_tag(name:str) -> Tag:
         tag = Tag(**name)
         return await tag.insert()
 
