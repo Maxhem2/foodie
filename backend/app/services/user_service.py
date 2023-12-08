@@ -1,14 +1,19 @@
 from typing import Optional
 from uuid import UUID
-from app.schemas.user_schema import UserAuth
+from app.schemas.user_schema import UserAuth, UserUpdate
 from app.models.user_model import User
 from app.core.security import get_password, verify_password
 import pymongo
 
-from app.schemas.user_schema import UserUpdate
-
 
 class UserService:
+
+    @staticmethod
+    async def update_user_email(current_user: User, data: UserUpdate):
+        user = await UserService.retrieve_user(current_user.user_id)
+        user.email = data.email
+        await user.save()
+        return user
 
     # Methode zum Abrufen eines Benutzers anhand der Benutzer-ID
     @staticmethod

@@ -36,6 +36,11 @@ async def get_me(user: User = Depends(get_current_user)):
     return user
 
 # Endpunkt zum Aktualisieren der Benutzerdaten
+@user_router.put('/update_email', summary='Update User email')
+async def update_email(data: UserUpdate, user: User = Depends(get_current_user)):
+    return await UserService.update_user_email(user, data)
+        
+# Endpunkt zum Aktualisieren der Benutzerdaten
 @user_router.post('/update', summary='Update User', response_model=UserOut)
 async def update_user(data: UserUpdate, user: User = Depends(get_current_user)):
     try:
