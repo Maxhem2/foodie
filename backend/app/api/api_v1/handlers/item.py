@@ -7,13 +7,13 @@ from app.schemas.item_schema import ItemOut, ItemCreate, ItemUpdate
 from app.services.item_service import ItemService
 from app.models.item_model import Item
 
-# Erstellen eines FastAPI-Routers für die Item-Endpunkte
+# FastAPI-Router für die Item-Endpunkte
 item_router = APIRouter()
 
 # Endpunkt zum Abrufen aller Elemente des Benutzers
 @item_router.get('/', summary="Get all items of the user", response_model=List[ItemOut])
 async def list(current_user: User = Depends(get_current_user)):
-    # Auflisten aller Elemente und Validieren ihrer Ablaufdaten
+    # Auflisten aller Elemente und Validieren der Ablaufdaten
     items = await ItemService.list_items(current_user)
     for list_items in items:
         afd = list_items.item_id

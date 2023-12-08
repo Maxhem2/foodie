@@ -1,4 +1,3 @@
-// Importieren der benötigten Chakra UI- und React-Module sowie Hooks
 import {
   Button,
   Flex,
@@ -16,7 +15,6 @@ import { ThemeToggler } from "../Theme/ThemeToggler";
 import FallingStars from "./FallingStars";
 import { UserCreationInformation } from "types";
 
-// Registrierungskomponente
 export const Register = () => {
   // React-Hook-Form verwenden
   const {
@@ -25,10 +23,8 @@ export const Register = () => {
     formState: { errors, isSubmitting },
   } = useForm<UserCreationInformation>();
   
-  // Navigation-Hook verwenden
   const navigate = useNavigate();
   
-  // Toast-Hook verwenden
   const toast = useToast();
 
   // Funktion, die aufgerufen wird, wenn das Formular eingereicht wird

@@ -1,10 +1,9 @@
-// Importieren der benötigten Chakra UI-Elemente und -Hooks sowie externen Funktionen und Typen
 import { Box, Center, Container, Flex, Spinner, Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
 import { useState } from "react";
 import axiosInstance from "../../services/axios";
 import { AddUpdateItemModal } from "./AddUpdateItemModal";
 import { ItemCard } from "./ItemCard";
-import DropdownFilter from "../Drowdown/DropdownFilter";  // Hinweis: Hier gibt es einen Tippfehler ("Drowdown"), könnte "Dropdown" sein.
+import DropdownFilter from "../Drowdown/DropdownFilter";
 import format from "date-fns/format";
 import { Item } from "types";
 import { useMountEffect } from "hooks";

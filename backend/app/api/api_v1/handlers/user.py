@@ -7,7 +7,7 @@ from app.models.user_model import User
 from app.api.deps.user_deps import get_current_user
 from uuid import UUID
 
-# Erstellen eines FastAPI-Routers für die Benutzer-Endpunkte
+# FastAPI-Router für die Item-Endpunkte
 user_router = APIRouter()
 
 # Endpunkt zum Erstellen eines neuen Benutzers

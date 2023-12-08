@@ -34,6 +34,5 @@ export const Authenticated = (props: AuthenticatedProps) => {
   if (!isVerified) {
     return null;
   }
-  // Andernfalls die Kinderkomponenten rendern
   return <>{props.children}</>;
 };

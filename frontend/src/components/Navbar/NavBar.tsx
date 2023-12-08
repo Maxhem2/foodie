@@ -1,4 +1,3 @@
-// Importieren der benötigten Chakra UI-Elemente, React-Router-Elemente und benutzerdefinierten Hooks
 import {
   Avatar,
   Box,

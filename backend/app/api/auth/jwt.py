@@ -12,10 +12,10 @@ from app.schemas.auth_schema import TokenPayload
 from pydantic import ValidationError
 from jose import jwt
 
-# Erstellen eines FastAPI-Routers für Authentifizierungs-Endpunkte
+# FastAPI-Router für Authentifizierungs-Endpunkte
 auth_router = APIRouter()
 
-# Endpunkt zum Erstellen von Zugriffs- und Aktualisierungstoken für einen Benutzer
+# Zugriffs- und Aktualisierungstoken für einen Benutzer
 @auth_router.post('/login', summary="Create access and refresh tokens for user", response_model=TokenSchema)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
     # Benutzer authentifizieren
@@ -32,7 +32,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
         "refresh_token": create_refresh_token(user.user_id),
     }
 
-# Endpunkt zum Testen, ob das Zugriffstoken gültig ist
+# Endpunkt zum Testen, ob der Zugriffstoken gültig ist
 @auth_router.post('/test-token', summary="Test if the access token is valid", response_model=UserOut)
 async def test_token(user: User = Depends(get_current_user)):
     return user

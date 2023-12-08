@@ -1,17 +1,10 @@
-// Importieren von Chakra UI- und React-Bibliotheken
 import { Button, Flex, FormControl, FormErrorMessage, Heading, Input, useColorModeValue, useToast } from "@chakra-ui/react";
-// Importieren von React-Hook-Form und react-router-dom-Hooks
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-// Importieren des Authentifizierungs-Hooks
 import { useAuth } from "../../hooks/useAuth";
-// Importieren der Theme-Toggler-Komponente
 import { ThemeToggler } from "../Theme/ThemeToggler";
-// Importieren von React-Modul
 import { useState } from "react";
-// Importieren der FallingStars-Komponente
 import FallingStars from "./FallingStars";
-// Importieren der Typen für den Login-Parameter
 import { LoginParams } from "types";
 
 const slogans: string[] = [

@@ -1,5 +1,3 @@
-# tests/test_user_service.py
-
 from fastapi.testclient import TestClient
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -9,42 +7,40 @@ from app.app import app
 from app.core.config import settings
 from app.models.user_model import User
 
-
 @pytest.fixture
 async def test_app():
-    # Use a separate MongoDB database for testing
+    # Seperate MongoDB-Datenbank für Tests
     test_db_name = "test_db"
     test_db_client = AsyncIOMotorClient(settings.MONGO_CONNECTION_STRING)[test_db_name]
     
-    # Initialize Beanie with the test database
+    # Initialisierung mit der Testdatenbank
     await init_beanie(
         database=test_db_client,
         document_models=[User],
     )
     
-    # Modify the app's MongoDB connection string to use the test database
+    # MongoDB-Verbindung der App für die Verwendung der Testdatenbank
     settings.MONGO_CONNECTION_STRING = settings.MONGO_CONNECTION_STRING.replace(
         settings.MONGO_DB_NAME, test_db_name
     )
 
-    # Create a test client with the modified app
+    # Erstellen eines Test-Clients
     async with TestClient(app) as test_client:
-        yield test_client  # Provide the test client to tests
+        yield test_client  # Stelle den Test-Client für Tests bereit
 
-    # Clean up: Drop the test database after all tests
+    # Aufräumen: Löschen der Testdatenbank nach allen Tests
     await test_db_client.drop_database(test_db_name)
 
-
+# Test für die Benutzererstellung erstellen
 async def test_create_user(test_app):
-    # Test data: Replace with appropriate test data
     email = "user1@gmail.com"
     password = "user123"
     user_data = {"email": email, "password": password}
 
-    # Test: Send a request to create a user
+    # Test: Sendet Anfrage zur Erstellung eines Benutzers
     response = await test_app.post("/api/v1/users/create", json=user_data)
 
-    # Assertions: Verify the response
+    # Überprüft die Antwort
     assert response.status_code == 201
     created_user = response.json()
     assert created_user["email"] == email

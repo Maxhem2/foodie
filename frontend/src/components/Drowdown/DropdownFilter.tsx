@@ -1,4 +1,3 @@
-// Importieren der benötigten Chakra UI-Elemente und -Hooks
 import {
     IconButton,
     Image,

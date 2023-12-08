@@ -9,7 +9,7 @@ from app.core.config import settings
 from app.models.item_model import Item
 from app.models.user_model import User
 
-# Erstellen einer FastAPI-Instanz mit Projektinformationen
+# Erstellen einer FastAPI-Instanz
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
@@ -30,11 +30,11 @@ async def app_init():
     # Verbindung zur MongoDB-Datenbank herstellen
     db_client = AsyncIOMotorClient(settings.MONGO_CONNECTION_STRING).ITEMLIST
     
-    # Initialisieren der Beanie-Integration für MongoDB
+    # Initialisieren der Integration für MongoDB
     await init_beanie(
         database=db_client,
         document_models=[User, Item]
     )
 
-# Einbinden des API-Routers mit dem angegebenen Präfix
+# Einbinden des API-Routers
 app.include_router(router, prefix=settings.API_V1_STR)
