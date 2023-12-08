@@ -9,6 +9,20 @@ from app.schemas.user_schema import UserUpdate
 
 
 class UserService:
+
+    @staticmethod
+    async def retrieve_user(user_id: UUID):
+        user = await User.find_one(User.user_id == user_id)
+        return user
+            
+    @staticmethod
+    async def delete_user(current_user: User) -> None:
+        user = await UserService.retrieve_user(current_user.user_id)
+        if user:
+            await user.delete()
+            
+        return None
+
     @staticmethod
     async def create_user(user: UserAuth):
         user_in = User(

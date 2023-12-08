@@ -5,7 +5,7 @@ from app.services.user_service import UserService
 import pymongo
 from app.models.user_model import User
 from app.api.deps.user_deps import get_current_user
-
+from uuid import UUID
 
 user_router = APIRouter()
 
@@ -20,6 +20,11 @@ async def create_user(data: UserAuth):
         )
 
 
+@user_router.delete('/delete', summary="Delete user by user_id")
+async def delete(current_user: User = Depends(get_current_user)):
+    await UserService.delete_user(current_user)
+    return None
+   
 
 @user_router.get('/me', summary='Get details of currently logged in user', response_model=UserOut)
 async def get_me(user: User = Depends(get_current_user)):
