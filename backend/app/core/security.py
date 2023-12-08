@@ -4,33 +4,39 @@ from typing import Union, Any
 from app.core.config import settings
 from jose import jwt
 
+# Passlib CryptContext für das Hashing von Passwörtern erstellen
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-
+# Funktion zur Erstellung eines Zugriffstokens
 def create_access_token(subject: Union[str, Any], expires_delta: int = None) -> str:
+    # Ablaufzeit des Tokens festlegen
     if expires_delta is not None:
         expires_delta = datetime.utcnow() + expires_delta
     else:
         expires_delta = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     
+    # Daten für die JWT-Codierung erstellen und Token codieren
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET_KEY, settings.ALGORITHM)
     return encoded_jwt
 
+# Funktion zur Erstellung eines Aktualisierungstokens
 def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) -> str:
+    # Ablaufzeit des Tokens festlegen
     if expires_delta is not None:
         expires_delta = datetime.utcnow() + expires_delta
     else:
         expires_delta = datetime.utcnow() + timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES)
     
+    # Daten für die JWT-Codierung erstellen und Token codieren
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, settings.JWT_REFRESH_SECRET_KEY, settings.ALGORITHM)
     return encoded_jwt
 
-
+# Funktion zum Hashen eines Passworts
 def get_password(password: str) -> str:
     return password_context.hash(password)
 
-
+# Funktion zur Überprüfung eines Passworts gegen einen gehashten Wert
 def verify_password(password: str, hashed_pass: str) -> bool:
     return password_context.verify(password, hashed_pass)

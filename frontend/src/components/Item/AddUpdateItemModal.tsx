@@ -26,6 +26,7 @@ export const AddUpdateItemModal = (props: AddUpdateItemModalProps) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    // Berechnete Werte basierend auf foodEntry
     const foodEntryValues: Item | undefined = useMemo(() => {
         if (foodEntry !== undefined && foodEntry.status !== 0) {
             const title = foodEntry.product.product_name || foodEntry.product.product_name_de;
@@ -41,6 +42,7 @@ export const AddUpdateItemModal = (props: AddUpdateItemModalProps) => {
         setBarcode(barcode);
     };
 
+    //Verarbeitung des Barcodes und der Lebensmittelinformationen
     useEffect(() => {
         if (barcode !== undefined) {
             (async () => {
@@ -51,6 +53,7 @@ export const AddUpdateItemModal = (props: AddUpdateItemModalProps) => {
         }
     }, [barcode]);
 
+    //Zurücksetzen des View-Modus und der Lebensmittelinformationen beim Schließen des Modals
     useEffect(() => {
         if (!isOpen) {
             setViewMode(ViewMode.None);
@@ -80,6 +83,7 @@ export const AddUpdateItemModal = (props: AddUpdateItemModalProps) => {
                         </ModalBody>
                         :
                         viewMode === ViewMode.Form ? (
+                            // Formularansicht für das Hinzufügen oder Aktualisieren eines Elements
                             <ItemForm
                                 editable={props.editable}
                                 camera="close"
@@ -88,8 +92,10 @@ export const AddUpdateItemModal = (props: AddUpdateItemModalProps) => {
                                 onSuccess={() => props.onSuccess()}
                             />
                         ) : viewMode === ViewMode.Camera ? (
+                            // Barcode-Scanner-Ansicht
                             <BarcodeReader onResult={(data: Result) => cameraBarcodeFound(data)} />
                         ) : viewMode === ViewMode.CameraForm ? (
+                            // Kombinierte Ansicht für Barcode-Scanner und Formular
                             <ItemForm
                                 editable={props.editable}
                                 camera="open"
@@ -99,6 +105,7 @@ export const AddUpdateItemModal = (props: AddUpdateItemModalProps) => {
                                 openCamera={() => setViewMode(ViewMode.Camera)}
                             />
                         ) : (
+                            // Standardansicht mit Schaltflächen zum Wechseln zwischen Kamera und Formular
                             <div style={{
                                 display: 'flex',
                                 alignItems: "center",

@@ -9,6 +9,7 @@ type ItemCardProps = {
 }
 
 export const ItemCard = (props: ItemCardProps) => {
+    // Funktion zur Berechnung der verbleibenden Tage bis zum Verfallsdatum
     const calculateExpireDate = useCallback(() => {
         const timeDifference = (endOfDay(new Date(props.item.expireDate))).getTime() - (endOfDay(new Date())).getTime();
         const daysDifference = timeDifference / (1000 * 3600 * 24);
@@ -16,8 +17,11 @@ export const ItemCard = (props: ItemCardProps) => {
 
     }, [props.item]);
 
+    // Memoisierte berechnete Werte (Verhindert erneute Berechnung bei Komponenten-Updates)
     const calculatedExpireDate = useMemo(() => calculateExpireDate(), [calculateExpireDate]);
 
+
+    // Funktion zur Auswahl des Color Schemes für die Badge-Komponente basierend auf verbleibenden Tagen
     const colorSchemeSwitch = () => {
         return calculatedExpireDate < 0 ? "black" : calculatedExpireDate <= 3 ? "red" : calculatedExpireDate <= 10 ? "yellow" : "green";
     };

@@ -22,6 +22,7 @@ const initialState: State = {
   user: null,
 };
 
+// Reducer-Handler für verschiedene Aktionen
 export const AuthContext = createContext({
   ...initialState,
   login: (email: string, password: string) => Promise.resolve(),
@@ -57,6 +58,7 @@ const handlers = {
   },
 };
 
+// Der Reducer für den Authentifizierungszustand
 const reducer = (state: State, action: Action) => {
   const handler = handlers[action.type] as (state: State, action: Action) => State;
   return handler ? handler(state, action) : state;
@@ -71,10 +73,12 @@ export const AuthProvider = (props: any) => {
     if (isMounted.current) return;
     const initialize = async () => {
       try {
+                // Überprüfen, ob ein gültiger Token im lokalen Speicher vorhanden ist
         const accessToken = localStorage.getItem("accessToken");
         if (accessToken && validateToken(accessToken)) {
           setSession(accessToken);
 
+          // Benutzerinformationen abrufen und den Zustand aktualisieren
           const response = await axiosInstance.get("/users/me");
           const { data: user } = response;
           dispatch({
@@ -85,6 +89,7 @@ export const AuthProvider = (props: any) => {
             },
           });
         } else {
+          // Kein gültiger Token vorhanden, Zustand aktualisieren
           dispatch({
             type: "INITIALIZE",
             payload: {
@@ -95,6 +100,7 @@ export const AuthProvider = (props: any) => {
         }
       } catch (error) {
         console.error(error);
+        // Fehler beim Initialisieren, Zustand aktualisieren
         dispatch({
           type: "INITIALIZE",
           payload: {
@@ -108,6 +114,7 @@ export const AuthProvider = (props: any) => {
     isMounted.current = true;
   }, []);
 
+  // Funktion zum Abrufen von Token nach erfolgreicher Anmeldung
   const getTokens = async (email: string, password: string) => {
     const formData = new FormData();
     formData.append("username", email);
@@ -122,6 +129,7 @@ export const AuthProvider = (props: any) => {
 
   const login = async (email: string, password: string) => {
     try {
+      // Token abrufen und Benutzerinformationen aktualisieren
       await getTokens(email, password);
       const response = await axiosInstance.get("/users/me");
       const { data: user } = response;
